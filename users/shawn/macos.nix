@@ -1,8 +1,8 @@
 {pkgs, ...}: {
-  users.users.work = {
-    isNormalUser = true;
-    home = "/Users/user";
-    extraGroups = ["wheel"];
+  users.users.shawn = {
+    # isNormalUser = true;
+    home = "/Users/shawn";
+    # extraGroups = ["wheel"];
     shell = pkgs.fish;
   };
 
