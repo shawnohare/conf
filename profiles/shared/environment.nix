@@ -38,8 +38,9 @@
       # grh = "git reset --hard";
       # gs = "git status";
       # l = "ls -lh";
-      ls = "exa";
+      ls = "exa --icons --color-scale";
       la = "exa --long --all --icons --color-scale";
+      lg = "exa --long --all --icons --color-scale --grid";
     };
     # Load variables set in /etc/environment.d
     extraInit = ''
