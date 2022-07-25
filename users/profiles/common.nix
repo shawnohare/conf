@@ -8,6 +8,7 @@
 }: {
   # Let home-manager manage itself.
   imports = [
+    ./git.nix
     ./home-manager.nix
   ];
 }

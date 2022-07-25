@@ -39,8 +39,8 @@
       # gs = "git status";
       # l = "ls -lh";
       ls = "exa --icons --color-scale";
-      la = "exa --long --all --icons --color-scale";
-      lg = "exa --long --all --icons --color-scale --grid";
+      la = "exa --long --all --icons --color-scale --group --header";
+      lg = "exa --long --all --icons --color-scale --grid --group --header";
     };
     # Load variables set in /etc/environment.d
     extraInit = ''
@@ -65,6 +65,7 @@
       mosh
       ripgrep
       shellcheck
+      tectonic
       wget
     ];
   };
