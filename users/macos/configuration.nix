@@ -8,9 +8,6 @@
   user,
   ...
 }: {
-  imports = [
-    ../../hosts/macos/configuration.nix
-  ];
 
   # NOTE: The user attribute name seems like it should match the actual
   # user name else home-manager complains.

@@ -22,7 +22,7 @@
   };
 
   homebrew = {
-    enable = true;
+    enable = false;
     autoUpdate = false;
     cleanup = "zap";
     brews = [
@@ -40,7 +40,7 @@
         AppleKeyboardUIMode = 3;
         ApplePressAndHoldEnabled = false;
         InitialKeyRepeat = 10;
-        KeyRepeat = 1;
+        KeyRepeat = 2;
         NSAutomaticCapitalizationEnabled = false;
         NSAutomaticDashSubstitutionEnabled = false;
         NSAutomaticPeriodSubstitutionEnabled = false;
@@ -52,8 +52,8 @@
       };
       dock = {
         autohide = true;
-        autohide-delay = 0.0;
-        autohide-time-modifier = 0;
+        autohide-delay = "0";
+        autohide-time-modifier = "0";
         mru-spaces = false;
         orientation = "bottom";
         showhidden = true;

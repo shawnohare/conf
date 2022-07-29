@@ -24,6 +24,7 @@ darwin.lib.darwinSystem rec {
 
     # ../hardware/${name}.nix
     ../hosts/${system}/configuration.nix
+    ../profiles/macos/configuration.nix
     # Apply user-specific system configurations.
     ../users/${user.dir}/macos/configuration.nix
 

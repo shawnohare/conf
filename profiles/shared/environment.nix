@@ -51,7 +51,7 @@
       fi
     '';
     systemPackages = with pkgs; [
-      awscli
+      awscli2
       bottom
       coreutils-prefixed
       ctags
