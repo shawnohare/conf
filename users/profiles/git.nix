@@ -24,7 +24,7 @@
     };
 
     extraConfig = {
-      branch.autosetuprebase = "always";
+      # branch.autosetuprebase = "always";
       color = {
         diff = "auto";
         status = "auto";

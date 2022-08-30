@@ -60,7 +60,7 @@ example, `host ∈ {work, macbook, intel, ...}` and should correspond to one of
 `darwinConfigurations` in [flake.nix](./flake.nix).
 
 ```bash
-export CONFIG_HOME="$HOME/conf"
+export CONFIG_HOME="$HOME/nixos-config"
 export host=<machine>
 # get basic dev tools, including git
 xcode-select --install
@@ -89,11 +89,14 @@ provide nix-darwin and home-manager.
 
 # References
 
-This flake was initially a near clone of
-[Matthias' NixOS & macOS configuration flake][matthias_nixos_config]
+- This flake was initially a near clone of
+  [Matthias' NixOS & macOS configuration flake][matthias_nixos_config]
+- The [digga][digga] project also provides a flake template and lib for
+  highly structured and modularized configs.
+- [Mitchell Hashimoto's nixos config][mitcchellh_nixos_config]
+- [flake-utils-plus][flake-utils-plus]
 
-The [digga][digga] project also provides a flake template and lib for
-highly structured and modularized configs. f
+
 
 
 
