@@ -69,8 +69,12 @@
     # machine. Currently this serves only to distinguish a company provided
     # laptop (usually macbook) from other uses.
     userProfiles = {
-      work = {
+      work_user  = {
         name = "user";
+        dir = "work";
+      };
+      work = {
+        name = "shawn.ohare";
         dir = "work";
       };
       admin = {
@@ -90,14 +94,24 @@
     # );
 
     darwinConfigurations = {
-      work = mkDarwin rec {
+      work_x86 = mkDarwin rec {
         inherit darwin home-manager inputs;
         nixpkgs = inputs.nixpkgs-darwin;
         system = "x86_64-darwin";
+        user = userProfiles.work_user;
+        overlays = 0;
+      };
+
+      work_m1 = mkDarwin rec {
+        inherit darwin home-manager inputs;
+        nixpkgs = inputs.nixpkgs-darwin;
+        system = "aarch64-darwin";
         user = userProfiles.work;
         overlays = 0;
       };
+
     };
+
 
     # Configurations that do not have "nixos-rebuild" capability.
     # linuxConfigurations = (                                                # Non-NixOS configurations
@@ -110,6 +124,7 @@
     formatter = {
       x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
       x86_64-darwin = nixpkgs.legacyPackages.x86_64-darwin.alejandra;
+      aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
     };
   };
 }
