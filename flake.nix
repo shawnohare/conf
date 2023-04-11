@@ -18,9 +18,9 @@
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
     nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin";
-    nixpkgs-darwin-unstable.url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin";
+    nixpkgs-darwin-unstable.url = "github:nixos/nixpkgs";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-22.05";
@@ -31,7 +31,7 @@
     # similar to what's provided in NixOS.
     darwin = {
       url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-darwin-unstable";
     };
 
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -96,15 +96,15 @@
     darwinConfigurations = {
       work_x86 = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
+        nixpkgs = inputs.nixpkgs-darwin-unstable;
         system = "x86_64-darwin";
         user = userProfiles.work_user;
         overlays = 0;
       };
 
-      work_m1 = mkDarwin rec {
+      work = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
+        nixpkgs = inputs.nixpkgs-darwin-unstable;
         system = "aarch64-darwin";
         user = userProfiles.work;
         overlays = 0;

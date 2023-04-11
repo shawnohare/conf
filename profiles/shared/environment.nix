@@ -2,6 +2,7 @@
 # - shell aliases
 # - env vars
 # - system packages
+# Many of the aliases and such will not translate to development shells.
 {
   self,
   config,
@@ -26,18 +27,7 @@
       "..." = "cd ../..";
       "...." = "cd ../../..";
       "....." = "cd ../../../..";
-      # g = "git log --pretty=color -32";
-      # gb = "git branch";
-      # gc = "git checkout";
-      # gcb = "git checkout -B";
-      # gd = "git diff --minimal --patch";
-      # gf = "git fetch";
-      # ga = "git log --pretty=color --all";
-      # gg = "git log --pretty=color --graph";
-      # gl = "git log --pretty=nocolor";
-      # grh = "git reset --hard";
-      # gs = "git status";
-      # l = "ls -lh";
+      dev = "nix develop";
       ls = "exa --icons --color-scale";
       la = "exa --long --all --icons --color-scale --group --header";
       lg = "exa --long --all --icons --color-scale --grid --group --header";
@@ -52,21 +42,34 @@
     '';
     systemPackages = with pkgs; [
       awscli2
+      bash
       bottom
-      coreutils-prefixed
+      # coreutils-prefixed
       ctags
       curl
       direnv
       # entr
       exa
+      fd
+      fastmod
       git
+      glow
       htop
       jq
+      moreutils
       mosh
+      # micromamba
+      # NOTE: We tend to use recent versions of neovim and install directly.
+      # neovim
+      nushell
       ripgrep
+      rustup
       shellcheck
       tectonic
+      tmux
+      uutils-coreutils
       wget
+      zsh
     ];
   };
 

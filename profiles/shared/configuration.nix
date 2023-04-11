@@ -31,16 +31,21 @@
 
   # use unstable nix so we can access flakes
   nix = {
+    configureBuildUsers = true;
+    nrBuildUsers = 32;
     package = pkgs.nixUnstable;
+
     extraOptions = ''
       experimental-features = nix-command flakes
       keep-outputs = true
       keep-derivations = true
     '';
-    useSandbox = false;
-    # sandboxPaths = ["/private/tmp" "/private/var/tmp" "/usr/bin/env"];
-    binaryCachePublicKeys = [];
-    trustedBinaryCaches = [];
+    settings = {
+        sandbox = false;
+        trusted-substituters = [];
+        trusted-public-keys = [];
+
+    };
   };
 
   nixpkgs = {
@@ -63,8 +68,6 @@
 
   users = {
     nix = {
-      configureBuildUsers = true;
-      nrBuildUsers = 32;
     };
   };
 }

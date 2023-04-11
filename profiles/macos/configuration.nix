@@ -21,17 +21,17 @@
     };
   };
 
-  homebrew = {
-    enable = false;
-    autoUpdate = false;
-    cleanup = "zap";
-    brews = [
-    ];
-    casks = [
-      "jetbrains-toolbox"
-      "alfred"
-    ];
-  };
+  # homebrew = {
+  #   enable = false;
+  #   autoUpdate = false;
+  #   cleanup = "zap";
+  #   brews = [
+  #   ];
+  #   casks = [
+  #     "jetbrains-toolbox"
+  #     "alfred"
+  #   ];
+  # };
 
   # macOS system defaults configuration that normally occurr through UI.
   system = {
@@ -52,11 +52,12 @@
       };
       dock = {
         autohide = true;
-        autohide-delay = "0";
-        autohide-time-modifier = "0";
+        autohide-delay = 0.0;
+        autohide-time-modifier = 0.0;
         mru-spaces = false;
         orientation = "bottom";
         showhidden = true;
+        tilesize = 64;
       };
       finder = {
         AppleShowAllExtensions = true;

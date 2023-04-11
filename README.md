@@ -19,7 +19,7 @@ We maintain another repo of user configurations.
    vms are used to abstract some of these nuances away. We may settle upon
    a pattern where some hosts are abstract, to have common files to apply to
    a company mandated MacBook vs a personal one. This would be obviated to
-   an extent if we worked mostly inside of vms for what little development
+   an extent if we worked mostly inside vms for what little development
    work we do.
 1. [profiles](./profiles/) contains collections of configurations for a specific
    operating mode, e.g., system-wide package configurations. Our normal
@@ -53,34 +53,57 @@ macs.
 
 ## Installation
 
-### init
-
 We install nix-darwin by building this flake for a specific machine host. For
 example, `host ∈ {work, macbook, intel, ...}` and should correspond to one of
 `darwinConfigurations` in [flake.nix](./flake.nix).
 
+Below are some possible steps to perform after installing nix but
+before switching the configuration with nix-darwin.
+
+First install some of the basic command line tools
+
 ```bash
-export CONFIG_HOME="$HOME/nixos-config"
-export host=<machine>
-# get basic dev tools, including git
 xcode-select --install
-# get nixos
-sh <(curl -L https://nixos.org/nix/install)
-# get flake
-git clone https://github.com/shawnohare/nixos-config "${CONFIG_HOME}"
-cd "${CONFIG_HOME}"
-nix --extra-experimental-features "nix-command flakes" build "${CONFIG_HOME}#darwinConfigurations.${host}.system"
-result/sw/bin/darwin-rebuild switch --flake "${CONFIG_HOME}#${host}"
-#
 ```
 
-### Rebuilding
+Then install nix itself in multiuser mode.
+```bash
+sh <(curl -L https://nixos.org/nix/install) --daemon
+```
+
+Clone and build the flake.
+
+```bash
+export host=<machine>  # e.g., "work"
+git clone https://github.com/shawnohare/nixos-config
+cd nixos-config
+nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
+result/sw/bin/darwin-rebuild switch --flake ".#${host}"
+```
+
+### nix-darwin Installation Troubleshooting
+
+nix-darwin might fail if it cannot find `/run`. Try
+
+```bash
+printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
+/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+```
+
+nix-darwin might fail to write certain files if they already exist. Try
+```bash
+sudo mv /etc/nix/nix.conf /etc/nix/nix-darwin.bak.nix.conf
+sudo mv /etc/nix/nix.conf /etc/nix/.nix-darwin.bkp.nix.conf
+sudo mv /etc/shells /etc/nix-darwin.bak.shells
+```
+
+## Rebuilding
 
 After the initialization `darwin-rebuild` is available and the configuration
 can be rebuilt via
 
 ```bash
-darwin-rebuild switch --flake "${CONFIG_HOME}#${host}"
+darwin-rebuild switch --flake "~/nixos-config#${host}"
 ```
 
 We must obtain the nix package manager and build the flake, which will
@@ -93,7 +116,7 @@ provide nix-darwin and home-manager.
   [Matthias' NixOS & macOS configuration flake][matthias_nixos_config]
 - The [digga][digga] project also provides a flake template and lib for
   highly structured and modularized configs.
-- [Mitchell Hashimoto's nixos config][mitcchellh_nixos_config]
+- [Mitchell Hashimoto's nixos config][mitchellh_nixos_config]
 - [flake-utils-plus][flake-utils-plus]
 
 
