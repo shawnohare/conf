@@ -56,6 +56,7 @@
       glow
       htop
       jq
+      miller
       moreutils
       mosh
       # micromamba
@@ -64,6 +65,7 @@
       nushell
       ripgrep
       rustup
+      q-text-as-data
       shellcheck
       tectonic
       tmux
