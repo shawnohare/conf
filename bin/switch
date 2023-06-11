@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+target="$1"
+if [ -z "${target+x}" ]; then
+    echo "ERROR: Must provide host target."
+    exit 1
+fi
+
+if [ "$(uname -s)" = "Darwin" ]; then
+    cmd="darwin-rebuild"
+    if ! command -v "darwin-rebuild" 1> /dev/null; then
+        echo "Did not detect rebuild command on macOS. Building flake."
+        nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${target}.system"
+        cmd="result/sw/bin/darwin-rebuild"
+    fi
+else
+    cmd="nixos-rebuild"
+fi
+
+
+"${cmd}" switch --show-trace --verbose --flake ".#${target}"

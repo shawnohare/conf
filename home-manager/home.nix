@@ -1,4 +1,5 @@
-# Cross-platform home-manager program configurations.
+# Cross-platform home-manager program configurations. This file represents
+# the base home configuration.
 {
   config,
   nixpkgs,

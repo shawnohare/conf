@@ -8,12 +8,12 @@
   ...
 }: {
   imports = [
-    ../profiles/common.nix
+    ../home-manager/home.nix
   ];
 
   home = {
     username = "${user.name}";
     homeDirectory = "/Users/${user.name}";
-    stateVersion = "22.05";
+    stateVersion = "23.05";
   };
 }

@@ -10,16 +10,18 @@
     enable = true;
     userName = "Shawn O'Hare";
     userEmail = "shawn@shawnohare.com";
+    lfs.enable = true;
 
     aliases = {
       df = "diff --color-words=. --ws-error-highlight=new,old";
-      root = "rev-parse --show-toplevel";
       lg = "log --decorate";
       lga = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
+      ls = "ls-files";
+      newbr = "switch -c";
+      root = "rev-parse --show-toplevel";
       st = "status";
       sv = "status --verbose";
       sw = "switch";
-      newbr = "switch -c";
       unstage = "restore --staged";
     };
 
