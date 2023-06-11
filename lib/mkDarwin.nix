@@ -26,7 +26,7 @@ darwin.lib.darwinSystem rec {
     ../hosts/${system}/configuration.nix
     ../profiles/macos/configuration.nix
     # Apply user-specific system configurations.
-    ../users/${user.dir}/macos/configuration.nix
+    ../users/${user.dir}/configuration.nix
 
     home-manager.darwinModules.home-manager
     {
@@ -36,7 +36,7 @@ darwin.lib.darwinSystem rec {
         extraSpecialArgs = {
           inherit user;
         };
-        users."${user.name}" = import ../users/${user.dir}/macos/home.nix;
+        users."${user.name}" = import ../users/${user.dir}/home.nix;
       };
     }
 

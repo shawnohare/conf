@@ -5,7 +5,7 @@
   # cf. `nix help flake` for more
   nixConfig = {
     extra-experimental-features = "nix-command flakes";
-    extra-substituters = "https://nrdxp.cachix.org https://nix-community.cachix.org";
+    # extra-substituters = "https://nrdxp.cachix.org https://nix-community.cachix.org";
     # extra-trusted-public-keys = "nrdxp.cachix.org-1:Fc5PSqY2Jm1TrWfm88l6cvGWwz3s93c6IOifQWnhNW4= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
   };
 
@@ -17,13 +17,13 @@
     # But, perhaps even more usefully, it provides a place for adding
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
     nixpkgs-darwin-unstable.url = "github:nixos/nixpkgs";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-22.05";
+      url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -31,7 +31,7 @@
     # similar to what's provided in NixOS.
     darwin = {
       url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs-darwin-unstable";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -68,18 +68,19 @@
     # Define user profiles, which correspond roughly with how we use the
     # machine. Currently this serves only to distinguish a company provided
     # laptop (usually macbook) from other uses.
+    # The dir specifies a path in ./users
     userProfiles = {
       work_user  = {
         name = "user";
-        dir = "work";
+        dir = "macos";
       };
       work = {
         name = "shawn.ohare";
-        dir = "work";
+        dir = "macos";
       };
       admin = {
         name = "shawn";
-        dir = "shawn";
+        dir = "macos";
       };
     };
   in {
@@ -96,7 +97,7 @@
     darwinConfigurations = {
       work_x86 = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin-unstable;
+        nixpkgs = inputs.nixpkgs-darwin;
         system = "x86_64-darwin";
         user = userProfiles.work_user;
         overlays = 0;
@@ -104,12 +105,22 @@
 
       work = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin-unstable;
+        nixpkgs = inputs.nixpkgs-darwin;
         system = "aarch64-darwin";
         user = userProfiles.work;
         overlays = 0;
       };
 
+      macbook = mkDarwin rec {
+        inherit darwin home-manager inputs;
+        nixpkgs = inputs.nixpkgs-darwin;
+        system = "aarch64-darwin";
+        user = {
+            name = "shawn.ohare";
+            dir = "macos";
+        };
+        overlays = 0;
+      };
     };
 
 

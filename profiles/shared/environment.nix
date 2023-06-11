@@ -43,11 +43,15 @@
     systemPackages = with pkgs; [
       awscli2
       bash
-      bottom
+      bandwhich
+      bat  # cat clone
+      bottom  # not top
       # coreutils-prefixed
       ctags
       curl
+      delta  # diff
       direnv
+      du-dust  # du + rust = dust
       # entr
       exa
       fd
@@ -55,6 +59,7 @@
       git
       glow
       htop
+      hyperfine  # benchmarking
       jq
       miller
       moreutils
@@ -63,14 +68,21 @@
       # NOTE: We tend to use recent versions of neovim and install directly.
       # neovim
       nushell
+      pandoc
+      procs  # ps replacement
+      q-text-as-data
       ripgrep
       rustup
-      q-text-as-data
       shellcheck
+      sd  # simple sed
+      starship
+      tealdeer
       tectonic
       tmux
+      tokei
       uutils-coreutils
       wget
+      zoxide  # like z
       zsh
     ];
   };

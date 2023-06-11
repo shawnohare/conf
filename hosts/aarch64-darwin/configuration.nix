@@ -1,4 +1,4 @@
-# Intel macOS system configuration.
+# Apple silicon macOS system configuration.
 {
   config,
   lib,

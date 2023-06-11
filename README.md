@@ -32,10 +32,9 @@ We maintain another repo of user configurations.
    [Matthias' NixOS & Darwin Config][matthias_nixos_config] for a flake that
    defines host targets for all three types of hosts
    (NixOS, macOS, non-NixOS linux).
-    1. [users/profiles](./users/profiles) The user-specific program configurations
-       that will be managed by home-manager. Typicaly these profiles are host
-       agnostic to the extent possible.
-    1. The `users/<user>`
+1. [home-manager](./home-manager) The user-specific program configurations
+   that will be managed by home-manager. Typicaly these profiles are host
+   agnostic to the extent possible.
 1. [lib directory](./lib/) for common library functions used in this flake.
    These libs will serve to implement some of the boilerplate that gets
    taken care of by [flake-utils-plus][flake-utils-plus] or [digg][digga].
@@ -66,19 +65,25 @@ First install some of the basic command line tools
 xcode-select --install
 ```
 
-Then install nix itself in multiuser mode.
+Then install nix itself in multiuser mode using the official installer
 ```bash
 sh <(curl -L https://nixos.org/nix/install) --daemon
-```
 
-Clone and build the flake.
+```
+or check out https://github.com/DeterminateSystems/nix-installer.
+
+Clone and build the flake for a specified target, e.g
 
 ```bash
-export host=<machine>  # e.g., "work"
 git clone https://github.com/shawnohare/nixos-config
 cd nixos-config
 nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
 result/sw/bin/darwin-rebuild switch --flake ".#${host}"
+```
+
+Alternatively
+```bash
+bin/switch <target>
 ```
 
 ### nix-darwin Installation Troubleshooting
@@ -93,7 +98,6 @@ printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
 nix-darwin might fail to write certain files if they already exist. Try
 ```bash
 sudo mv /etc/nix/nix.conf /etc/nix/nix-darwin.bak.nix.conf
-sudo mv /etc/nix/nix.conf /etc/nix/.nix-darwin.bkp.nix.conf
 sudo mv /etc/shells /etc/nix-darwin.bak.shells
 ```
 
@@ -104,6 +108,8 @@ can be rebuilt via
 
 ```bash
 darwin-rebuild switch --flake "~/nixos-config#${host}"
+# or
+bin/switch ${host}
 ```
 
 We must obtain the nix package manager and build the flake, which will
