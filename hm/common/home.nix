@@ -41,13 +41,26 @@
       # Home Manager is pretty good at managing dotfiles. The primary way to manage
       # plain files is through 'home.file'.
       file = {
+        ".profile".source = ../etc/sh/env.sh;
+        ".bashrc".source = ../etc/bash/rc.bash;
+        ".bash_profile".source = ../etc/bash/profile.bash;
+        ".zshenv".source = ../etc/zsh/env.zsh;
+        ".config/zsh" = {
+            recursive = true;
+            source = ../etc/zsh;
+        };
+        ".config/zsh/.zshrc".source = ../etc/zsh/rc.zsh;
         ".config/" = {
             recursive = true;
             source = ../etc/config;
         };
+        ".config/sh" = {
+            recursive = true;
+            source = ../etc/sh;
+        };
         ".local/bin" = {
             recursive = true;
-            source = ../etc/bin;
+            source = ../bin;
         };
         ".local/bin/switch".source = ../../bin/switch;
 

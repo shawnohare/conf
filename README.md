@@ -122,6 +122,37 @@ nix build --extra-experimental-features "nix-command flakes" ".#homeConfiguratio
 bin/switch home ${host}
 ```
 
+## Management of config files
+
+Originally we managed configuration files via committing them to a version
+controlled repository and then symlinking them into the appropriate location
+via tools such as GNU `stow` or our own bash replacement. The benefit here is
+that once the files are linked, changes can be made to the source and they will
+propagate without re-linking. Only when new files are added do we need to
+re-link.
+
+Then we utilized a bare git repository that contained all configuration files.
+The benefit here is that there are no symlinks at all, so changes are immediate
+and require no rebuilds. The downside with a bare repo is that one must
+explicitly pass the git dir and work tree as arguments to `git`, which itself
+is more or less trivial. But then the basic commands tend to have a lot of
+clutter. Many things get ignored, there are many untracked files, etc.
+
+
+Using home-manager's builtin modules to configure applications or even the
+symlinking capabilities does involve a rebuild after any configuration change.
+This is because the source file in the repository gets copied to the nix store
+and then linked. For rapid configuration changes this is a bit of a pain, but
+can be alleviated perhaps by manually symlinking the file.
+
+Presently most of our configuration files are managed via the bare git
+repository strategy, but ideally they are centralized in a single location. Our
+plan is to move more configuration over to home-manager modules once the
+underlying configuration is mature. There is a mild downside to this approach
+in that it introduces yet another abstraction layer over the configuration
+files. The long term benefit is that mature applications will likely have
+robust home-manager modules.
+
 
 # References
 

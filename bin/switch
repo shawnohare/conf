@@ -10,7 +10,7 @@ build() {
 switch() {
     cmd="$1"
     target="$2"
-    "${cmd}" switch --show-trace --verbose "${DIR}/#${target}"
+    "${cmd}" --show-trace --verbose switch --flake "${DIR}/#${target}"
 }
 
 # Switch the system configuration.
