@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# $ airport -I
+     # agrCtlRSSI: -65
+     # agrExtRSSI: 0
+    # agrCtlNoise: -90
+    # agrExtNoise: 0
+     #      state: running
+     #    op mode: station
+     # lastTxRate: 243
+     #    maxRate: 300
+# lastAssocStatus: 0
+    # 802.11 auth: open
+     #  link auth: wpa2-psk
+     #      BSSID: 82:2a:a9:45:f3:25
+     #       SSID: StackExchange WiFi Demo
+     #        MCS: 14
+     #    channel: 157,
+
+# To calculate SNR, you take the RSSI value and subtract the Noise value. In this
+# case, I have an RSSI of -65dB and a Noise value of -90dB. Calculated, that
+# gives me 25dB. Which is a very good signal (just barely but I am behind a
+# reinforced concrete wall away from my AP; not bad actually considering.
+#
+# SNR Guidelines
+#
+# 40dB+ SNR = Excellent signal
+# 25dB to 40dB SNR = Very good signal
+# 15dB to 25dB SNR = Low signal
+# 10dB to 15dB SNR = Very low signal
+# 5dB to 10dB SNR = No signal
+
+readonly airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
+
+while true
+do
+    # "${airport}" -I | grep CtlRSSI | sed -e 's/^.*://g' | xargs -I SIGNAL printf "\rRSSI dBm: SIGNAL"
+    # "${airport}" -I | grep CtlRSSI
+    val="$(${airport} -I)"
+    rssi=$(echo "${val}" | grep agrCtlRSSI | cut -d ':' -f 2)
+    noise=$(echo "${val}" | grep agrCtlNoise | cut -d ':' -f 2)
+    echo "RSSI: ${rssi}, Noise: ${noise}, SNR: $((${rssi}-${noise}))"
+    sleep 3.0
+done

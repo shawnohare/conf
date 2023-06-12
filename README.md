@@ -11,8 +11,8 @@ We maintain another repo of user configurations.
 
 # Structure
 
-1. Machine specific configurations are defined by a directory in
-   [hosts](./hosts/). In theory these configurations are at the highest level,
+1. Platform specific configurations are defined by a directory in
+   [system](./system/). In theory these configurations are at the highest level,
    but we suspect that architecture-specific configurations leak into lower
    levels, e.g., with new Apple Silicon based macs.
    Cf. [Mitchell Hashimoto's nixos setup][mitchellh_nixos_config] to see how
@@ -24,15 +24,7 @@ We maintain another repo of user configurations.
 1. [profiles](./profiles/) contains collections of configurations for a specific
    operating mode, e.g., system-wide package configurations. Our normal
    style is to push most package configurations to the user level.
-1. [users](./users/) largely contains home-manager configurations and is a
-   special type of profile. Only NixOS and macOS have `nixos-rebuild switch`
-   capabilities that can redefine the entire system and user-space, so
-   generic Linux targets (e.g., An Amazon Linux EC2 instance) would have to
-   rely on `home-manager`. Cf.
-   [Matthias' NixOS & Darwin Config][matthias_nixos_config] for a flake that
-   defines host targets for all three types of hosts
-   (NixOS, macOS, non-NixOS linux).
-1. [home-manager](./home-manager) The user-specific program configurations
+1. [hm (home-manager)](./hm) The user-specific program configurations
    that will be managed by home-manager. Typicaly these profiles are host
    agnostic to the extent possible.
 1. [lib directory](./lib/) for common library functions used in this flake.
@@ -41,8 +33,23 @@ We maintain another repo of user configurations.
    Most likely we will end up using an external library once we are
    comfortable enough with nix.
 1. [overlays](./overlays) containing package overrides, e.g., to use a
-   different channel
+   different channel. Not used much if at all at the moment.
 
+# Install nix
+
+On platforms other than NixOS, we must first install nix itself in order to
+build the flake.
+
+```bash
+
+if [ "$(uname -s)" = "Darwin" ]; then
+    xcode-select --install
+fi
+sh <(curl -L https://nixos.org/nix/install) --daemon
+# or
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+The latter installation method is from https://github.com/DeterminateSystems/nix-installer.
 
 # macOS
 
@@ -52,25 +59,12 @@ macs.
 
 ## Installation
 
-We install nix-darwin by building this flake for a specific machine host. For
+We install nix-darwin by building this flake for a specific host. For
 example, `host ∈ {work, macbook, intel, ...}` and should correspond to one of
 `darwinConfigurations` in [flake.nix](./flake.nix).
 
 Below are some possible steps to perform after installing nix but
 before switching the configuration with nix-darwin.
-
-First install some of the basic command line tools
-
-```bash
-xcode-select --install
-```
-
-Then install nix itself in multiuser mode using the official installer
-```bash
-sh <(curl -L https://nixos.org/nix/install) --daemon
-
-```
-or check out https://github.com/DeterminateSystems/nix-installer.
 
 Clone and build the flake for a specified target, e.g
 
@@ -83,7 +77,9 @@ result/sw/bin/darwin-rebuild switch --flake ".#${host}"
 
 Alternatively
 ```bash
-bin/switch <target>
+bin/switch system ${host}
+# for example
+bin/switch system wmbp2022
 ```
 
 ### nix-darwin Installation Troubleshooting
@@ -109,11 +105,22 @@ can be rebuilt via
 ```bash
 darwin-rebuild switch --flake "~/nixos-config#${host}"
 # or
-bin/switch ${host}
+bin/switch system ${host}
 ```
 
 We must obtain the nix package manager and build the flake, which will
 provide nix-darwin and home-manager.
+
+# home-manager
+
+To build a home-manager configuration for the first time
+
+```bash
+nix build --extra-experimental-features "nix-command flakes" ".#homeConfigurations.${host}.activationPackage"
+./result/activate
+# or
+bin/switch home ${host}
+```
 
 
 # References

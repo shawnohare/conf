@@ -6,14 +6,14 @@
   nixpkgs,
   home-manager,
   system,
-  user,
+  username,
   overlays,
   ...
 }:
 darwin.lib.darwinSystem rec {
   inherit system;
   specialArgs = {
-    inherit user inputs;
+    inherit username inputs;
   };
 
   modules = [
@@ -23,20 +23,22 @@ darwin.lib.darwinSystem rec {
     # { nixpkgs.overlays = overlays; }
 
     # ../hardware/${name}.nix
-    ../hosts/${system}/configuration.nix
+    ../system/${system}/configuration.nix
     ../profiles/macos/configuration.nix
-    # Apply user-specific system configurations.
-    ../users/${user.dir}/configuration.nix
+    # ../users/common/configuration.nix
 
+    # TODO: Disabled until we determine whether we want to use home-manager
+    # in a standalone mode to avoid having to rebuild the system when there
+    # are configuration changes.
     home-manager.darwinModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
         extraSpecialArgs = {
-          inherit user;
+          inherit username;
         };
-        users."${user.name}" = import ../users/${user.dir}/home.nix;
+        users."${username}" = import ../hm/common/home.nix;
       };
     }
 

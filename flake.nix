@@ -65,24 +65,7 @@
     ...
   }: let
     mkDarwin = import ./lib/mkDarwin.nix;
-    # Define user profiles, which correspond roughly with how we use the
-    # machine. Currently this serves only to distinguish a company provided
-    # laptop (usually macbook) from other uses.
-    # The dir specifies a path in ./users
-    userProfiles = {
-      work_user  = {
-        name = "user";
-        dir = "macos";
-      };
-      work = {
-        name = "shawn.ohare";
-        dir = "macos";
-      };
-      admin = {
-        name = "shawn";
-        dir = "macos";
-      };
-    };
+    mkHomeConfiguration = import ./lib/mkHomeConfiguration.nix;
   in {
     inherit self inputs;
 
@@ -94,33 +77,73 @@
     #   }
     # );
 
+    # Build system configurations.
+    # NOTE: Currently these also include home-manager modules but we are
+    # transitioning to a stand-alone home-manager set up so that
+    # home configurations can work in general Linux environments.
     darwinConfigurations = {
-      work_x86 = mkDarwin rec {
+
+      mbp2016 = mkDarwin rec {
         inherit darwin home-manager inputs;
         nixpkgs = inputs.nixpkgs-darwin;
         system = "x86_64-darwin";
-        user = userProfiles.work_user;
+        username = "shawn";
         overlays = 0;
       };
 
-      work = mkDarwin rec {
+      wmbp2019 = mkDarwin rec {
         inherit darwin home-manager inputs;
         nixpkgs = inputs.nixpkgs-darwin;
-        system = "aarch64-darwin";
-        user = userProfiles.work;
+        system = "x86_64-darwin";
+        username = "user";
         overlays = 0;
       };
 
-      macbook = mkDarwin rec {
+      wmbp2022 = mkDarwin rec {
         inherit darwin home-manager inputs;
         nixpkgs = inputs.nixpkgs-darwin;
         system = "aarch64-darwin";
-        user = {
-            name = "shawn.ohare";
-            dir = "macos";
+        username = "shawn.ohare";
+        overlays = 0;
+      };
+    };
+
+    # Stand-alone home-manager configurations so that user configs
+    # can be rebuilt independently of the system itself.
+    # cf. https://github.com/MatthiasBenaets/nixos-config/blob/master/nix.org
+    # TODO: We should be able to use "forEachSystem" here to generate
+    # configs for each system that use the appropriate pkgs.
+    homeConfigurations = {
+        # "shawnohare@mbp" = home-manager.lib.homeManagerConfiguration {
+        #     pkgs = nixpkgs.legacyPackages."aarch64-darwin";
+        #     extraSpecialArgs = { inherit inputs; };
+        #     modules = [
+        #         ./home-manager/standalone.nix
+        #         # Set username explicitly here.
+        #         {
+        #             home = {
+        #                 username = "shawn.ohare";
+        #                 homeDirectory = "/Users/shawn.ohare";
+        #                 stateVersion = "23.05";
+        #
+        #             };
+        #         }
+        #
+        #     ];
+        #
+        # };
+
+        wmbp2022 = mkHomeConfiguration rec {
+            inherit home-manager inputs;
+            nixpkgs = inputs.nixpkgs;
+            system = "aarch64-darwin";
+            username = "shawn.ohare";
+            homeDirectory = "/Users/shawn.ohare";
+            stateVersion = "23.05";
+            additional_modules = [];
+            overlays = 0;
         };
-        overlays = 0;
-      };
+        # "additional-user" = { ... };
     };
 
 

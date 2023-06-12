@@ -10,7 +10,7 @@
 }: {
   # Import cross-platform system configuration.
   imports = [
-    ../shared/configuration.nix
+    ../common/configuration.nix
   ];
 
   # macos specific aliases. These could be put in a common file and

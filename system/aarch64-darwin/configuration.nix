@@ -1,4 +1,4 @@
-# Intel macOS system configuration.
+# Apple silicon macOS system configuration.
 {
   config,
   lib,
@@ -10,7 +10,7 @@
 }: {
   # Import cross-platform system configuration.
   imports = [
-    ../shared/configuration.nix
+    ../common/configuration.nix
     ../macos/configuration.nix
   ];
 

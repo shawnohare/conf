@@ -17,12 +17,13 @@
       lg = "log --decorate";
       lga = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       ls = "ls-files";
-      newbr = "switch -c";
+      new= "switch -c";
       root = "rev-parse --show-toplevel";
       st = "status";
       sv = "status --verbose";
       sw = "switch";
       unstage = "restore --staged";
+      home= "!git --git-dir=\"\${HOME}/.git/\" --work-tree=\"\${HOME}\"";
     };
 
     extraConfig = {
@@ -45,6 +46,7 @@
       };
       push = {
         default = "tracking";
+        autoSetupRemote = true;
       };
     };
   };

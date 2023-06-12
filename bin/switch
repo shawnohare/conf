@@ -1,21 +1,65 @@
 #!/usr/bin/env sh
 
-target="$1"
-if [ -z "${target+x}" ]; then
+DIR="${HOME}/nixos-config"
+
+build() {
+    echo "Building initial flake $1"
+    nix --verbose --show-trace --extra-experimental-features "nix-command flakes" build "${DIR}/#$1"
+}
+
+switch() {
+    cmd="$1"
+    target="$2"
+    "${cmd}" switch --show-trace --verbose "${DIR}/#${target}"
+}
+
+# Switch the system configuration.
+switch_system() {
+    target="$1"
+    if [ "$(uname -s)" = "Darwin" ]; then
+        cmd="darwin-rebuild"
+        if ! command -v "darwin-rebuild" 1> /dev/null; then
+            echo "Did not detect rebuild command on macOS."
+            build "darwinConfigurations.${target}.system"
+            cmd="result/sw/bin/darwin-rebuild"
+        fi
+    else
+        cmd="nixos-rebuild"
+    fi
+    switch "${cmd}" "${target}"
+    return 0
+}
+
+switch_home() {
+    target="$1"
+    if ! command -v "home-manager" 1> /dev/null; then
+        build "homeConfigurations.${target}.activationPackage"
+        ./result/activate
+        echo "You probably should restart your shell to ensure changes."
+    else
+        switch "home-manager" "${target}"
+    fi
+
+    return 0
+}
+
+
+command=$1
+target=$2
+if [ -z "${command+x}" ] || [ -z "${target+x}" ]; then
     echo "ERROR: Must provide host target."
     exit 1
 fi
 
-if [ "$(uname -s)" = "Darwin" ]; then
-    cmd="darwin-rebuild"
-    if ! command -v "darwin-rebuild" 1> /dev/null; then
-        echo "Did not detect rebuild command on macOS. Building flake."
-        nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${target}.system"
-        cmd="result/sw/bin/darwin-rebuild"
-    fi
-else
-    cmd="nixos-rebuild"
-fi
-
-
-"${cmd}" switch --show-trace --verbose --flake ".#${target}"
+case "${command}" in
+    system|sys)
+        switch_system "${target}"
+        ;;
+    home)
+        switch_home "${target}"
+        ;;
+    *)
+        echo "ERROR: Unknown command: $1"
+        exit 1
+        ;;
+esac

@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+for code in {255..017}; do print -P -- "$code: %F{$code}Test%f, %F{$code}%BTest%b%f"; done
+echo "\nAnsi colors\n"
+for code in {016..000}; do print -P -- "$code: %F{$code}Test%f, %F{$code}%BTest%b%f"; done

@@ -1,0 +1,14 @@
+#! /usr/bin/env zsh
+# https://github.com/BurntSushi/ripgrep/blob/master/FAQ.md#search-and-replace
+# BSD sed requires -i '' but GNU sed does not
+# NOTE: Pass the find and replace regexs with single quotes.
+rg "$1" --files-with-matches -0 | xargs -0 sed -i '' "s/$1/$2/g"
+
+#
+# sed -i 's/$1/& $2/g' myDir/**/*.txt
+# sed -i '' "s/$1/$2/g" **/*
+# sed "s/$1/$2/g" **/*
+
+# replace all occurrences of $1 with $2 inplace, no backup file.
+# find ./ -type f -exec sed -i '' "s/$1/$2/g" {} \;
+# echo "$1\n$2\n${3:-default}"

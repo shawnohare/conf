@@ -8,9 +8,4 @@
   user,
   ...
 }: {
-  # Import cross-platform system configuration.
-  imports = [
-    ../shared/configuration.nix
-  ];
-
 }

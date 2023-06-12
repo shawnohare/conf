@@ -7,6 +7,7 @@
   inputs,
   pkgs,
   home-manager,
+  username,
   ...
 }: {
   imports = [
@@ -68,6 +69,12 @@
 
   users = {
     nix = {
+    };
+    users."${username}" = {
+      # isNormalUser = true;
+      name = "${username}";
+      home = lib.mkDefault (if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}");
+      shell = pkgs.zsh;
     };
   };
 }
