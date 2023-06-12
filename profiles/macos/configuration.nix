@@ -34,6 +34,9 @@
   # };
 
   # macOS system defaults configuration that normally occurr through UI.
+  security = {
+    pam.enableSudoTouchIdAuth = true;
+  };
   system = {
     defaults = {
       NSGlobalDomain = {
