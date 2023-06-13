@@ -14,7 +14,6 @@
     ./environment.nix
   ];
 
-
   fonts = {
     # Fonts
     fontDir.enable = true;
@@ -42,10 +41,9 @@
       keep-derivations = true
     '';
     settings = {
-        sandbox = false;
-        trusted-substituters = [];
-        trusted-public-keys = [];
-
+      sandbox = false;
+      trusted-substituters = [];
+      trusted-public-keys = [];
     };
   };
 
@@ -73,7 +71,11 @@
     users."${username}" = {
       # isNormalUser = true;
       name = "${username}";
-      home = lib.mkDefault (if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}");
+      home = lib.mkDefault (
+        if pkgs.stdenv.isDarwin
+        then "/Users/${username}"
+        else "/home/${username}"
+      );
       shell = pkgs.zsh;
     };
   };

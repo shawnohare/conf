@@ -5,8 +5,8 @@
   # cf. `nix help flake` for more
   nixConfig = {
     extra-experimental-features = "nix-command flakes";
-    # extra-substituters = "https://nrdxp.cachix.org https://nix-community.cachix.org";
-    # extra-trusted-public-keys = "nrdxp.cachix.org-1:Fc5PSqY2Jm1TrWfm88l6cvGWwz3s93c6IOifQWnhNW4= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
+    # extra-substituters = "https://nix-community.cachix.org";
+    # extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
   };
 
   inputs = {
@@ -18,9 +18,8 @@
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
-    nixpkgs-darwin-unstable.url = "github:nixos/nixpkgs";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-23.05";
@@ -82,7 +81,6 @@
     # transitioning to a stand-alone home-manager set up so that
     # home configurations can work in general Linux environments.
     darwinConfigurations = {
-
       mbp2016 = mkDarwin rec {
         inherit darwin home-manager inputs;
         nixpkgs = inputs.nixpkgs-darwin;
@@ -114,38 +112,16 @@
     # TODO: We should be able to use "forEachSystem" here to generate
     # configs for each system that use the appropriate pkgs.
     homeConfigurations = {
-        # "shawnohare@mbp" = home-manager.lib.homeManagerConfiguration {
-        #     pkgs = nixpkgs.legacyPackages."aarch64-darwin";
-        #     extraSpecialArgs = { inherit inputs; };
-        #     modules = [
-        #         ./home-manager/standalone.nix
-        #         # Set username explicitly here.
-        #         {
-        #             home = {
-        #                 username = "shawn.ohare";
-        #                 homeDirectory = "/Users/shawn.ohare";
-        #                 stateVersion = "23.05";
-        #
-        #             };
-        #         }
-        #
-        #     ];
-        #
-        # };
-
-        wmbp2022 = mkHomeConfiguration rec {
-            inherit home-manager inputs;
-            nixpkgs = inputs.nixpkgs;
-            system = "aarch64-darwin";
-            username = "shawn.ohare";
-            homeDirectory = "/Users/shawn.ohare";
-            stateVersion = "23.05";
-            additional_modules = [];
-            overlays = 0;
-        };
-        # "additional-user" = { ... };
+      wmbp2022 = mkHomeConfiguration rec {
+        inherit home-manager inputs;
+        nixpkgs = inputs.nixpkgs-darwin;
+        system = "aarch64-darwin";
+        username = "shawn.ohare";
+        stateVersion = "23.05";
+        additional_modules = [];
+        overlays = 0;
+      };
     };
-
 
     # Configurations that do not have "nixos-rebuild" capability.
     # linuxConfigurations = (                                                # Non-NixOS configurations

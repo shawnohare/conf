@@ -44,14 +44,14 @@
       awscli2
       bash
       bandwhich
-      bat  # cat clone
-      bottom  # not top
+      bat # cat clone
+      bottom # not top
       # coreutils-prefixed
       ctags
       curl
-      delta  # diff
+      delta # diff
       direnv
-      du-dust  # du + rust = dust
+      du-dust # du + rust = dust
       # entr
       exa
       fd
@@ -59,7 +59,7 @@
       git
       glow
       htop
-      hyperfine  # benchmarking
+      hyperfine # benchmarking
       jq
       miller
       moreutils
@@ -69,12 +69,12 @@
       # neovim
       nushell
       pandoc
-      procs  # ps replacement
+      procs # ps replacement
       q-text-as-data
       ripgrep
       rustup
       shellcheck
-      sd  # simple sed
+      sd # simple sed
       starship
       tealdeer
       tectonic
@@ -82,9 +82,8 @@
       tokei
       uutils-coreutils
       wget
-      zoxide  # like z
+      zoxide # like z
       zsh
     ];
   };
-
 }

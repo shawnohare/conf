@@ -27,9 +27,6 @@ darwin.lib.darwinSystem rec {
     ../profiles/macos/configuration.nix
     # ../users/common/configuration.nix
 
-    # TODO: Disabled until we determine whether we want to use home-manager
-    # in a standalone mode to avoid having to rebuild the system when there
-    # are configuration changes.
     home-manager.darwinModules.home-manager
     {
       home-manager = {

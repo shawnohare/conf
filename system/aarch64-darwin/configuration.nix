@@ -13,5 +13,4 @@
     ../common/configuration.nix
     ../macos/configuration.nix
   ];
-
 }
