@@ -44,19 +44,17 @@ switch_home() {
 }
 
 
-command=$1
-target=$2
-if [ -z "${command+x}" ] || [ -z "${target+x}" ]; then
-    echo "ERROR: Must provide host target."
-    exit 1
-fi
-
-case "${command}" in
-    system|sys)
-        switch_system "${target}"
+case "$1" in
+    --system|-s)
+        switch_system "$2"
         ;;
-    home)
-        switch_home "${target}"
+    -h|--home)
+        switch_home "$2"
+        ;;
+    --help)
+        echo "Usage: switch [-h | -s] <flake attribute>."
+        echo "Example: switch -h wmbp2022"
+        exit 0
         ;;
     *)
         echo "ERROR: Unknown command: $1"

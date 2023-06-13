@@ -5,7 +5,6 @@
   user,
   ...
 }: {
-
   programs.git = {
     enable = true;
     userName = "Shawn O'Hare";
@@ -17,13 +16,13 @@
       lg = "log --decorate";
       lga = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       ls = "ls-files";
-      new= "switch -c";
+      new = "switch -c";
       root = "rev-parse --show-toplevel";
       st = "status";
       sv = "status --verbose";
       sw = "switch";
       unstage = "restore --staged";
-      home= "!git --git-dir=\"\${HOME}/.git/\" --work-tree=\"\${HOME}\"";
+      home = "!git --git-dir=\"\${HOME}/.git/\" --work-tree=\"\${HOME}\"";
     };
 
     extraConfig = {
