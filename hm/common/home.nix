@@ -4,7 +4,10 @@
   config,
   host,
   ...
-}: {
+}: let
+  homebrew_prefix = "/opt/homebrew";
+  local_bin = "$HOME/.local/bin";
+in {
   # Let home-manager manage itself.
   imports = [
     ../programs/readline.nix
@@ -62,6 +65,7 @@
         recursive = true;
         source = ../etc/sh;
       };
+      ".config/ipython/profile_default/ipython_config.py".source = ../etc/ipython/config.py;
       ".local/bin" = {
         recursive = true;
         source = ../bin;
@@ -119,6 +123,7 @@
       TMUX_PLUGIN_MANAGER_PATH = "${config.xdg.stateHome}/tmux/plugins/";
       VISUAL = "nvim";
       WEECHAT_HOME = "${config.xdg.configHome}/weechat";
+      PATH = "${local_bin}:$PATH:${homebrew_prefix}/bin:${homebrew_prefix}/sbin:${config.xdg.stateHome}/cargo/bin:${config.xdg.stateHome}/go/bin";
     };
 
     shellAliases = {

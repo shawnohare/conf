@@ -46,7 +46,7 @@
 
     # TODO: Set path properly?
     initExtra = ''
-      source "$HOME/.config/sh/path.sh"
+      # source "$HOME/.config/sh/path.sh"
       bindkey -v
       autoload -U chpwd_recent_dirs cdr add-zsh-hook
       add-zsh-hook chpwd chpwd_recent_dirs
