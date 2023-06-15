@@ -11,9 +11,9 @@ fi
 echo "Setting aliases."
 
 if command -v exa 1> /dev/null; then
-  alias ls="exa --icons --color-scale"
-  alias la="exa --long --all --icons --color-scale --group --header"
-  alias lg="exa --long --all --icons --color-scale --grid --group --header"
+  alias ls="exa --icons --color-scale --group-directories-first"
+  alias la="exa --long --all --icons --color-scale --group --header --group-directories-first"
+  alias lg="exa --long --all --icons --color-scale --grid --group --header --group-directories-first"
 fi
 
 alias SH_ALIASES_SOURCED="echo 0"

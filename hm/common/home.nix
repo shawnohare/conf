@@ -2,23 +2,28 @@
   pkgs,
   lib,
   config,
-  username,
+  host,
   ...
 }: {
   # Let home-manager manage itself.
   imports = [
-    ../modules/git.nix
-    ../modules/starship.nix
+    ../programs/readline.nix
+    ../programs/git.nix
+    ../programs/starship.nix
+    ../programs/exa.nix
+    ../programs/zsh.nix
+    ../programs/bash.nix
+    ../programs/tmux.nix
   ];
 
   home = {
-    username = lib.mkDefault "${username}";
+    username = lib.mkDefault "${host.username}";
     homeDirectory = lib.mkDefault (
       if pkgs.stdenv.isDarwin
       then "/Users/${config.home.username}"
       else "/home/${config.home.username}"
     );
-    stateVersion = lib.mkDefault "23.05";
+    stateVersion = lib.mkDefault "${host.stateVersion}";
 
     # The home.packages option allows you to install Nix packages into your
     # environment.
@@ -45,15 +50,10 @@
     # Home Manager is pretty good at managing dotfiles. The primary way to manage
     # plain files is through 'home.file'.
     file = {
-      ".profile".source = ../etc/sh/env.sh;
-      ".bashrc".source = ../etc/bash/rc.bash;
-      ".bash_profile".source = ../etc/bash/profile.bash;
-      ".zshenv".source = ../etc/zsh/env.zsh;
-      ".config/zsh" = {
-        recursive = true;
-        source = ../etc/zsh;
-      };
-      ".config/zsh/.zshrc".source = ../etc/zsh/rc.zsh;
+      # ".profile" set by bash.nix module
+      # ".profile".source = ../etc/sh/env.sh;
+      # ".bashrc".source = ../etc/bash/rc.bash;
+      # ".bash_profile".source = ../etc/bash/profile.bash;
       ".config/" = {
         recursive = true;
         source = ../etc/config;
@@ -75,23 +75,72 @@
       # '';
     };
 
-    # You can also manage environment variables but you will have to manually
-    # source
-    #
-    #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-    #
-    # or
-    #
-    #  /etc/profiles/per-user/shawn.ohare/etc/profile.d/hm-session-vars.sh
-    #
-    # if you don't want to manage your shell through Home Manager.
-    # NOTE: This likely means enabling the shell in programs and migrating
-    # the config.
+    # NOTE: The shell must be managed by home-manager for env vars and aliases
+    # to be defined.
     sessionVariables = {
       # EDITOR = "emacs";
+      _HM_MYVAR = 1;
+      LANG = "en_US.UTF-8";
+      # NIXPKGS_CONFIG="${config.xdg.configHome}/nixpkgs/config.nix";
+      # SQITCH_USER_CONFIG="${config.xdg.configHome}/sqitch/config";
+      # STASH_TARGET="${HOME}";
+      CARGO_HOME = "${config.xdg.stateHome}/cargo";
+      CLICOLOR = "1";
+      DOOMDIR = "${config.xdg.configHome}/doom";
+      EDITOR = "nvim";
+      GOPATH = "${config.xdg.stateHome}/go";
+      HOMEBREW_BOOTSNAP = 1;
+      HOMEBREW_CELLAR = /opt/homebrew/Cellar;
+      HOMEBREW_NO_ANALYTICS = 1;
+      HOMEBREW_NO_AUTO_UPDATE = 1;
+      HOMEBREW_PREFIX = /opt/homebrew;
+      HOMEBREW_REPOSITORY = /opt/homebrew;
+      IPYTHONDIR = "${config.xdg.configHome}/ipython";
+      LESS = "-Mr";
+      LESSHISTFILE = "${config.xdg.stateHome}/less/history";
+      LISTLINKS = 1;
+      LS_COLORS = "ExGxBxDxCxEgEdxbxgxcxd";
+      MAMBARC = "${config.xdg.configHome}/mamba/config.yaml";
+      MAMBA_ROOT_PREFIX = "${config.xdg.stateHome}/mamba";
+      MANCOLOR = 1;
+      MANPAGER = "nvim --clean +Man!";
+      PAGER = "less";
+      PIPX_HOME = "${config.xdg.stateHome}/pipx";
+      POETRY_HOME = "${config.xdg.stateHome}/pypoetry";
+      POETRY_VIRTUALENVS_PATH = "${config.xdg.stateHome}/pypoetry/envs";
+      PYENV = "${config.xdg.stateHome}/pyenv/bin/pyenv";
+      PYENV_ROOT = "${config.xdg.stateHome}/pyenv";
+      PYENV_VIRTUALENV_DISABLE_PROMPT = 1;
+      PYSPARK_DRIVER_PYTHON = "ipython";
+      RUSTUP_HOME = "${config.xdg.stateHome}/rustup";
+      SCREENRC = "${config.xdg.configHome}/screen/screenrc";
+      SPACEMACSDIR = "${config.xdg.configHome}/spacemacs";
+      STACK_ROOT = "${config.xdg.stateHome}/stack";
+      TMUX_PLUGIN_MANAGER_PATH = "${config.xdg.stateHome}/tmux/plugins/";
+      VISUAL = "nvim";
+      WEECHAT_HOME = "${config.xdg.configHome}/weechat";
+    };
+
+    shellAliases = {
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      "..2" = "cd ../..";
+      "...." = "cd ../../..";
+      "..3" = "cd ../../..";
+      "....." = "cd ../../../..";
+      "..4" = "cd ../../../..";
+      dev = "nix develop";
+      mamba = "micromamba";
+      conda = "micromamba";
     };
   };
 
-  programs.home-manager.enable = true;
+  # Defaults to simply enable without much configuration.
+  programs = {
+    home-manager.enable = true;
+    zoxide.enable = true;
+    htop.enable = true;
+    bottom.enable = true;
+  };
   xdg.enable = true;
 }

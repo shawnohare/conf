@@ -1,22 +1,16 @@
 # This function creates a home-manager configuration.
 {
   inputs,
-  nixpkgs,
   home-manager,
-  system,
-  username,
-  homeDirectory,
-  stateVersion,
-  additional_modules,
-  overlays,
+  host,
   ...
 }:
 home-manager.lib.homeManagerConfiguration rec {
-  pkgs = nixpkgs.legacyPackages.${system};
-  extraSpecialArgs = {inherit inputs username;};
+  pkgs = host.nixpkgs.legacyPackages.${host.system};
+  extraSpecialArgs = {inherit inputs host;};
   modules =
     [
       ../hm/common/home.nix
     ]
-    ++ additional_modules;
+    ++ host.hm_modules;
 }

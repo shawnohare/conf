@@ -29,7 +29,6 @@ pack "spwhitt/nix-zsh-completions"            "nix-zsh-completions.plugin.zsh"
 pack "zsh-users/zsh-completions"              "zsh-completions.plugin.zsh"
 
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor root)
-
 ZSH_HIGHLIGHT_STYLES[alias]='fg=blue'
 ZSH_HIGHLIGHT_STYLES[arg0]='none'
 ZSH_HIGHLIGHT_STYLES[assign]='none'

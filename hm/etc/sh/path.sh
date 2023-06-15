@@ -9,7 +9,7 @@ echo "Setting path."
 # usr="/usr/local/bin:/usr/local/sbin:/usr/local/opt/bin:/opt/bin"
 brew="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin"
 langs="${CARGO_HOME}/bin:${GOPATH}/bin"
-local="${XDG_BIN_HOME}"
+local="${HOME}/.local/bin"
 
 # Detect if nix has set path and split path into nix and sys parts.
 sys="${PATH#*nix/profiles/default/bin:}"

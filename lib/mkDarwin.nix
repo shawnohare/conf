@@ -3,17 +3,14 @@
 {
   inputs,
   darwin,
-  nixpkgs,
   home-manager,
-  system,
-  username,
-  overlays,
+  host,
   ...
 }:
 darwin.lib.darwinSystem rec {
-  inherit system;
+  system = host.system;
   specialArgs = {
-    inherit username inputs;
+    inherit inputs system host;
   };
 
   modules = [
@@ -23,19 +20,19 @@ darwin.lib.darwinSystem rec {
     # { nixpkgs.overlays = overlays; }
 
     # ../hardware/${name}.nix
-    ../system/${system}/configuration.nix
-    ../profiles/macos/configuration.nix
-    # ../users/common/configuration.nix
-
+    ../system/${host.system}/configuration.nix
+    ../profiles/${host.profile}/configuration.nix
     home-manager.darwinModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
         extraSpecialArgs = {
-          inherit username;
+          inherit host;
         };
-        users."${username}" = import ../hm/common/home.nix;
+        # FIXME: It seems having a system and standalone version of
+        # home-manager is incompatible?
+        # users."${host.username}" = import ../hm/common/home.nix;
       };
     }
 

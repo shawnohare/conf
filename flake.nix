@@ -51,6 +51,11 @@
     # };
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
+    alejandra = {
+      url = "github:kamadorueda/alejandra/3.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -59,12 +64,51 @@
     home-manager,
     darwin,
     nur,
+    # alejandra,
     # , nixgl
     # , hyprland
     ...
   }: let
     mkDarwin = import ./lib/mkDarwin.nix;
     mkHomeConfiguration = import ./lib/mkHomeConfiguration.nix;
+    hosts = {
+      wmbp2022 = {
+        username = "shawn.ohare";
+        system = "aarch64-darwin";
+        nixpkgs = inputs.nixpkgs-darwin;
+        profile = "default";
+        stateVersion = "23.05";
+        hm_modules = [];
+        overlays = 0;
+      };
+      wmbp2019 = {
+        username = "user";
+        system = "x86_64-darwin";
+        nixpkgs = inputs.nixpkgs-darwin;
+        profile = "default";
+        stateVersion = "23.05";
+        hm_modules = [];
+        overlays = 0;
+      };
+      mbp2016 = {
+        username = "shawn";
+        system = "x86_64-darwin";
+        nixpkgs = inputs.nixpkgs-darwin;
+        profile = "default";
+        stateVersion = "23.05";
+        hm_modules = [];
+        overlays = 0;
+      };
+      mba2022 = {
+        username = "shawn";
+        system = "aaarch64-darwin";
+        nixpkgs = inputs.nixpkgs-darwin;
+        profile = "default";
+        stateVersion = "23.05";
+        hm_modules = [];
+        overlays = 0;
+      };
+    };
   in {
     inherit self inputs;
 
@@ -83,26 +127,17 @@
     darwinConfigurations = {
       mbp2016 = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
-        system = "x86_64-darwin";
-        username = "shawn";
-        overlays = 0;
+        host = hosts.mbp2016;
       };
 
       wmbp2019 = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
-        system = "x86_64-darwin";
-        username = "user";
-        overlays = 0;
+        host = hosts.wmbp2019;
       };
 
       wmbp2022 = mkDarwin rec {
         inherit darwin home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
-        system = "aarch64-darwin";
-        username = "shawn.ohare";
-        overlays = 0;
+        host = hosts.wmbp2022;
       };
     };
 
@@ -114,12 +149,7 @@
     homeConfigurations = {
       wmbp2022 = mkHomeConfiguration rec {
         inherit home-manager inputs;
-        nixpkgs = inputs.nixpkgs-darwin;
-        system = "aarch64-darwin";
-        username = "shawn.ohare";
-        stateVersion = "23.05";
-        additional_modules = [];
-        overlays = 0;
+        host = hosts.wmbp2022;
       };
     };
 

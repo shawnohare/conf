@@ -57,7 +57,7 @@ case "$1" in
         exit 0
         ;;
     *)
-        echo "ERROR: Unknown command: $1"
-        exit 1
+        switch_home "$1"
         ;;
 esac
+exit 0
