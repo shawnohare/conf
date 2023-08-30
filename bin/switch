@@ -2,42 +2,58 @@
 
 DIR="${HOME}/nixos-config"
 
-build() {
+
+_nix_build() {
     echo "Building initial flake $1"
     nix --verbose --show-trace --extra-experimental-features "nix-command flakes" build "${DIR}/#$1"
 }
 
-switch() {
+# Wrapper for nixos-rebuild, darwin-rebuild, and home-manager which all
+# expose the "switch" subcommand.
+_switch() {
     cmd="$1"
-    target="$2"
-    "${cmd}" --show-trace --verbose switch --flake "${DIR}/#${target}"
+    if [ -z "$2" ]; then
+        attr="$DIR"
+    else
+        attr="$DIR/#$2"
+    fi
+    "${cmd}" --show-trace --verbose switch --flake "${attr}"
 }
 
-# Switch the system configuration.
+# rebuild the system configuration.
 switch_system() {
     target="$1"
     if [ "$(uname -s)" = "Darwin" ]; then
         cmd="darwin-rebuild"
-        if ! command -v "darwin-rebuild" 1> /dev/null; then
-            echo "Did not detect rebuild command on macOS."
-            build "darwinConfigurations.${target}.system"
-            cmd="result/sw/bin/darwin-rebuild"
+        if ! command -v "${cmd}" 1> /dev/null; then
+            cd "${DIR}" || exit 1
+            echo "Did not detect darwin-rebuild command."
+            _nix_build "darwinConfigurations.${target}.system"
+            cmd="${DIR}/result/sw/bin/darwin-rebuild"
         fi
     else
         cmd="nixos-rebuild"
     fi
-    switch "${cmd}" "${target}"
+
+    _switch "${cmd}" "${target}"
     return 0
 }
 
+# rebuild the home-manager configuration
 switch_home() {
     target="$1"
+    if [ -z "${target}" ]; then
+        target="$(whoami)"
+    fi
+
     if ! command -v "home-manager" 1> /dev/null; then
-        build "homeConfigurations.${target}.activationPackage"
+        cd "${DIR}" || exit 1
+        echo "Building home manager configuration."
+        _nix_build "homeConfigurations.${target}.activationPackage"
         ./result/activate
-        echo "You probably should restart your shell to ensure changes."
+        echo "Restart shell to ensure changes."
     else
-        switch "home-manager" "${target}"
+        _switch "home-manager" "${target}"
     fi
 
     return 0

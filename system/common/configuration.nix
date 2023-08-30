@@ -35,10 +35,12 @@
       bandwhich
       bat # cat clone
       bottom # not top
+      cachix
       # coreutils-prefixed
       ctags
       curl
       delta # diff
+      devbox
       direnv
       du-dust # du + rust = dust
       # entr

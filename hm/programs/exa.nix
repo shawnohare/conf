@@ -16,7 +16,7 @@
       # "--color-scale"
       "--long"
       "--classify"
-      "--extended"
+      # "--extended"
     ];
     icons = true;
     git = false;

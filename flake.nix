@@ -5,8 +5,8 @@
   # cf. `nix help flake` for more
   nixConfig = {
     extra-experimental-features = "nix-command flakes";
-    # extra-substituters = "https://nix-community.cachix.org";
-    # extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
+    extra-substituters = "https://nix-community.cachix.org";
+    extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
   };
 
   inputs = {
@@ -101,7 +101,7 @@
       };
       mba2022 = {
         username = "shawn";
-        system = "aaarch64-darwin";
+        system = "aarch64-darwin";
         nixpkgs = inputs.nixpkgs-darwin;
         profile = "default";
         stateVersion = "23.05";
@@ -139,6 +139,12 @@
         inherit darwin home-manager inputs;
         host = hosts.wmbp2022;
       };
+
+      # Allows not specifying attribute.
+      "shawn.ohare" = mkDarwin rec {
+        inherit darwin home-manager inputs;
+        host = hosts.wmbp2022;
+      };
     };
 
     # Stand-alone home-manager configurations so that user configs
@@ -148,6 +154,11 @@
     # configs for each system that use the appropriate pkgs.
     homeConfigurations = {
       wmbp2022 = mkHomeConfiguration rec {
+        inherit home-manager inputs;
+        host = hosts.wmbp2022;
+      };
+
+      "shawn.ohare" = mkHomeConfiguration rec {
         inherit home-manager inputs;
         host = hosts.wmbp2022;
       };

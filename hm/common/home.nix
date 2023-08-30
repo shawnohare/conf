@@ -80,9 +80,8 @@ in {
     };
 
     # NOTE: The shell must be managed by home-manager for env vars and aliases
-    # to be defined.
+    # to be available.
     sessionVariables = {
-      # EDITOR = "emacs";
       _HM_MYVAR = 1;
       LANG = "en_US.UTF-8";
       # NIXPKGS_CONFIG="${config.xdg.configHome}/nixpkgs/config.nix";
@@ -103,7 +102,8 @@ in {
       LESS = "-Mr";
       LESSHISTFILE = "${config.xdg.stateHome}/less/history";
       LISTLINKS = 1;
-      LS_COLORS = "ExGxBxDxCxEgEdxbxgxcxd";
+      # LS_COLORS handled by dircolors module.
+      # LS_COLORS = "ExGxBxDxCxEgEdxbxgxcxd";
       MAMBARC = "${config.xdg.configHome}/mamba/config.yaml";
       MAMBA_ROOT_PREFIX = "${config.xdg.stateHome}/mamba";
       MANCOLOR = 1;
@@ -120,7 +120,8 @@ in {
       SCREENRC = "${config.xdg.configHome}/screen/screenrc";
       SPACEMACSDIR = "${config.xdg.configHome}/spacemacs";
       STACK_ROOT = "${config.xdg.stateHome}/stack";
-      TMUX_PLUGIN_MANAGER_PATH = "${config.xdg.stateHome}/tmux/plugins/";
+      # home-manager handles plugins directly.
+      # TMUX_PLUGIN_MANAGER_PATH = "${config.xdg.stateHome}/tmux/plugins/";
       VISUAL = "nvim";
       WEECHAT_HOME = "${config.xdg.configHome}/weechat";
       PATH = "${local_bin}:$PATH:${homebrew_prefix}/bin:${homebrew_prefix}/sbin:${config.xdg.stateHome}/cargo/bin:${config.xdg.stateHome}/go/bin";
@@ -137,15 +138,18 @@ in {
       dev = "nix develop";
       mamba = "micromamba";
       conda = "micromamba";
+      pyenvon = "micromamba activate";
+      pyenvoff = "mamba deactivate";
     };
   };
 
   # Defaults to simply enable without much configuration.
   programs = {
-    home-manager.enable = true;
-    zoxide.enable = true;
-    htop.enable = true;
     bottom.enable = true;
+    dircolors.enable = true;
+    home-manager.enable = true;
+    htop.enable = true;
+    zoxide.enable = true;
   };
   xdg.enable = true;
 }
