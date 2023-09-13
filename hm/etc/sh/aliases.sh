@@ -10,7 +10,12 @@ fi
 
 echo "Setting aliases."
 
-if command -v exa 1> /dev/null; then
+# NOTE: eza is an exa replacement.
+if command -v eza 1> /dev/null; then
+  alias ls="eza --icons --color-scale --group-directories-first"
+  alias la="eza --long --all --icons --color-scale --group --header --group-directories-first"
+  alias lg="eza --long --all --icons --color-scale --grid --group --header --group-directories-first"
+elif command -v exa 1> /dev/null; then
   alias ls="exa --icons --color-scale --group-directories-first"
   alias la="exa --long --all --icons --color-scale --group --header --group-directories-first"
   alias lg="exa --long --all --icons --color-scale --grid --group --header --group-directories-first"

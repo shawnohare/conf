@@ -13,7 +13,8 @@ in {
     ../programs/readline.nix
     ../programs/git.nix
     ../programs/starship.nix
-    ../programs/exa.nix
+    ../programs/exa.nix  # TODO: not maintained, remove when ready.
+    # ../programs/eza.nix  # TODO: Might need newer hm version. eza not found.
     ../programs/zsh.nix
     ../programs/bash.nix
     ../programs/tmux.nix
@@ -50,20 +51,12 @@ in {
       # '')
     ];
 
-    # Home Manager is pretty good at managing dotfiles. The primary way to manage
+    # Home Manager can symlink config files. The primary way to manage
     # plain files is through 'home.file'.
     file = {
-      # ".profile" set by bash.nix module
-      # ".profile".source = ../etc/sh/env.sh;
-      # ".bashrc".source = ../etc/bash/rc.bash;
-      # ".bash_profile".source = ../etc/bash/profile.bash;
       ".config/" = {
         recursive = true;
         source = ../etc/config;
-      };
-      ".config/sh" = {
-        recursive = true;
-        source = ../etc/sh;
       };
       ".config/ipython/profile_default/ipython_config.py".source = ../etc/ipython/config.py;
       ".local/bin" = {

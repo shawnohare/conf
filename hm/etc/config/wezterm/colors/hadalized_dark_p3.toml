@@ -1,0 +1,35 @@
+
+[colors]
+ansi = [
+    '#535657',
+    '#cd6c63',
+    '#63a45b',
+    '#969623',
+    '#3999d7',
+    '#b96daf',
+    '#16a89b',
+    '#d0cec7',
+]
+background = '#02090c'
+brights = [
+    '#7e8182',
+    '#c67735',
+    '#63a45b',
+    '#969623',
+    '#3999d7',
+    '#8c7ddd',
+    '#16a89b',
+    '#e0ded7',
+]
+cursor_bg = '#7e8182'
+cursor_border = '#63a45b'
+cursor_fg = '#f0eee8'
+foreground = '#abaeb0'
+selection_bg = '#f0eee8'
+selection_fg = '#151f23'
+
+[colors.indexed]
+
+[metadata]
+name = 'hadalized dark p3'
+origin_url = 'https://github.com/shawnohare/hadalized.nvim'

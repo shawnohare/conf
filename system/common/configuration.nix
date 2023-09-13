@@ -33,8 +33,8 @@
       awscli2
       bash
       bandwhich
-      bat # cat clone
-      bottom # not top
+      bat  # cat clone
+      bottom  # not top
       cachix
       # coreutils-prefixed
       ctags
@@ -44,7 +44,8 @@
       direnv
       du-dust # du + rust = dust
       # entr
-      exa
+      exa  # unmaintained!
+      # eza  # maintained version of exa. Keep both in case of re-name.
       fd
       fastmod
       git
@@ -56,16 +57,14 @@
       moreutils
       mosh
       # micromamba
-      # NOTE: We tend to use recent versions of neovim and install directly.
-      # neovim
+      # neovim  # NOTE: We like to use newer versions.
       ncurses
       nushell
       pandoc
       procs # ps replacement
       q-text-as-data
       ripgrep
-      # Might want to manually install rustup?
-      rustup
+      rustup  # TODO: Manually install this toolchain?
       shellcheck
       sd # simple sed
       starship

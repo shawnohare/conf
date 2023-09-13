@@ -81,15 +81,6 @@
         hm_modules = [];
         overlays = 0;
       };
-      wmbp2019 = {
-        username = "user";
-        system = "x86_64-darwin";
-        nixpkgs = inputs.nixpkgs-darwin;
-        profile = "default";
-        stateVersion = "23.05";
-        hm_modules = [];
-        overlays = 0;
-      };
       mbp2016 = {
         username = "shawn";
         system = "x86_64-darwin";
@@ -130,17 +121,13 @@
         host = hosts.mbp2016;
       };
 
-      wmbp2019 = mkDarwin rec {
-        inherit darwin home-manager inputs;
-        host = hosts.wmbp2019;
-      };
-
       wmbp2022 = mkDarwin rec {
         inherit darwin home-manager inputs;
         host = hosts.wmbp2022;
       };
 
-      # Allows not specifying attribute.
+      # configs keyed with user names allow simply running `switch -s` to update
+      # system configurations.
       "shawn.ohare" = mkDarwin rec {
         inherit darwin home-manager inputs;
         host = hosts.wmbp2022;
@@ -158,6 +145,8 @@
         host = hosts.wmbp2022;
       };
 
+      # configs keyed with user names allow simply running `switch` to update
+      # home manager configurations.
       "shawn.ohare" = mkHomeConfiguration rec {
         inherit home-manager inputs;
         host = hosts.wmbp2022;
