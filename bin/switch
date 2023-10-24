@@ -4,7 +4,7 @@ DIR="${HOME}/nixos-config"
 
 
 _nix_build() {
-    echo "Building initial flake $1"
+    echo "switch: Building initial flake $1"
     nix --verbose --show-trace --extra-experimental-features "nix-command flakes" build "${DIR}/#$1"
 }
 
@@ -27,7 +27,7 @@ switch_system() {
         cmd="darwin-rebuild"
         if ! command -v "${cmd}" 1> /dev/null; then
             cd "${DIR}" || exit 1
-            echo "Did not detect darwin-rebuild command."
+            echo "switch: Did not detect darwin-rebuild command."
             _nix_build "darwinConfigurations.${target}.system"
             cmd="${DIR}/result/sw/bin/darwin-rebuild"
         fi
@@ -48,10 +48,10 @@ switch_home() {
 
     if ! command -v "home-manager" 1> /dev/null; then
         cd "${DIR}" || exit 1
-        echo "Building home manager configuration."
+        echo "switch: Building home manager configuration."
         _nix_build "homeConfigurations.${target}.activationPackage"
         ./result/activate
-        echo "Restart shell to ensure changes."
+        echo "switch: Restart shell to ensure changes."
     else
         _switch "home-manager" "${target}"
     fi
@@ -68,8 +68,8 @@ case "$1" in
         switch_home "$2"
         ;;
     --help)
-        echo "Usage: switch [-h | -s] <flake attribute>."
-        echo "Example: switch -h wmbp2022"
+        echo "switch: Usage. switch [--home | --system] <flake attribute>"
+        echo "switch: Example. switch -h work"
         exit 0
         ;;
     *)

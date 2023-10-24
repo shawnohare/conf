@@ -77,9 +77,9 @@ result/sw/bin/darwin-rebuild switch --flake ".#${host}"
 
 Alternatively
 ```bash
-bin/switch system ${host}
+bin/switch --system ${host}
 # for example
-bin/switch system wmbp2022
+bin/switch --system wmbp2022
 ```
 
 ### nix-darwin Installation Troubleshooting
@@ -105,7 +105,7 @@ can be rebuilt via
 ```bash
 darwin-rebuild switch --flake "~/nixos-config#${host}"
 # or
-bin/switch system ${host}
+bin/switch --system ${host}
 ```
 
 We must obtain the nix package manager and build the flake, which will
@@ -119,7 +119,7 @@ To build a home-manager configuration for the first time
 nix build --extra-experimental-features "nix-command flakes" ".#homeConfigurations.${host}.activationPackage"
 ./result/activate
 # or
-bin/switch home ${host}
+bin/switch --home ${host}
 ```
 
 ## Management of config files

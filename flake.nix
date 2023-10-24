@@ -72,7 +72,7 @@
     mkDarwin = import ./lib/mkDarwin.nix;
     mkHomeConfiguration = import ./lib/mkHomeConfiguration.nix;
     hosts = {
-      wmbp2022 = {
+      work = {
         username = "shawn.ohare";
         system = "aarch64-darwin";
         nixpkgs = inputs.nixpkgs-darwin;
@@ -121,16 +121,16 @@
         host = hosts.mbp2016;
       };
 
-      wmbp2022 = mkDarwin rec {
+      work = mkDarwin rec {
         inherit darwin home-manager inputs;
-        host = hosts.wmbp2022;
+        host = hosts.work;
       };
 
       # configs keyed with user names allow simply running `switch -s` to update
       # system configurations.
       "shawn.ohare" = mkDarwin rec {
         inherit darwin home-manager inputs;
-        host = hosts.wmbp2022;
+        host = hosts.work;
       };
     };
 
@@ -140,16 +140,16 @@
     # TODO: We should be able to use "forEachSystem" here to generate
     # configs for each system that use the appropriate pkgs.
     homeConfigurations = {
-      wmbp2022 = mkHomeConfiguration rec {
+      work = mkHomeConfiguration rec {
         inherit home-manager inputs;
-        host = hosts.wmbp2022;
+        host = hosts.work;
       };
 
       # configs keyed with user names allow simply running `switch` to update
       # home manager configurations.
       "shawn.ohare" = mkHomeConfiguration rec {
         inherit home-manager inputs;
-        host = hosts.wmbp2022;
+        host = hosts.work;
       };
     };
 
