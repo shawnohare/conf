@@ -13,8 +13,8 @@ in {
     programs/readline.nix
     programs/git.nix
     programs/starship.nix
-    programs/exa.nix  # TODO: not maintained, remove when ready.
-    # programs/eza.nix  # TODO: Might need newer hm version. eza not found.
+    # programs/exa.nix  # TODO: not maintained, remove when ready.
+    programs/eza.nix  # TODO: Might need newer hm version. eza not found.
     programs/zsh.nix
     programs/bash.nix
     programs/tmux.nix
@@ -53,8 +53,8 @@ in {
       du-dust # du + rust = dust
       # entr
       # NOTE: eza seems to be added in 23.11?
-      exa  # unmaintained!
-      # eza  # maintained version of exa. Keep both in case of re-name.
+      # exa  # unmaintained!
+      eza  # maintained version of exa. Keep both in case of re-name.
       fd
       fastmod
       git

@@ -11,7 +11,9 @@
     # builtin plugins.
     enableAutosuggestions = true;
     enableCompletion = true;
-    enableSyntaxHighlighting = true;
+    syntaxHighlighting = {
+        enable = true;
+    };
 
     shellAliases = {
     };
