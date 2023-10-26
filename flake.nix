@@ -5,8 +5,6 @@
   # cf. `nix help flake` for more
   nixConfig = {
     extra-experimental-features = "nix-command flakes";
-    extra-substituters = "https://nix-community.cachix.org";
-    extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
   };
 
   inputs = {
@@ -17,12 +15,16 @@
     # But, perhaps even more usefully, it provides a place for adding
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.05";
+      # url = "github:nix-community/home-manager/release-23.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -71,13 +73,14 @@
   }: let
     mkDarwin = import ./lib/mkDarwin.nix;
     mkHomeConfiguration = import ./lib/mkHomeConfiguration.nix;
+    stateVersion = "23.11";
     hosts = {
       work = {
-        username = "shawn.ohare";
+        username = "Shawn.OHare";
         system = "aarch64-darwin";
         nixpkgs = inputs.nixpkgs-darwin;
         profile = "default";
-        stateVersion = "23.05";
+        stateVersion = "${stateVersion}";
         hm_modules = [];
         overlays = 0;
       };
@@ -86,7 +89,7 @@
         system = "x86_64-darwin";
         nixpkgs = inputs.nixpkgs-darwin;
         profile = "default";
-        stateVersion = "23.05";
+        stateVersion = "${stateVersion}";
         hm_modules = [];
         overlays = 0;
       };
@@ -95,7 +98,7 @@
         system = "aarch64-darwin";
         nixpkgs = inputs.nixpkgs-darwin;
         profile = "default";
-        stateVersion = "23.05";
+        stateVersion = "${stateVersion}";
         hm_modules = [];
         overlays = 0;
       };
@@ -103,7 +106,7 @@
   in {
     inherit self inputs;
 
-    # Also inherit home-manager so it does not need to be defined here.
+    # TODO: Add nixos configurations.
     # nixosConfigurations = (                                               # NixOS configurations
     #   import ./hosts/nixos{                                                     # Imports ./nixos/default.nix
     #     inherit (nixpkgs) lib;
@@ -145,9 +148,14 @@
         host = hosts.work;
       };
 
+      shawn = mkHomeConfiguration rec {
+        inherit home-manager inputs;
+        host = hosts.mba2022;
+      };
+
       # configs keyed with user names allow simply running `switch` to update
       # home manager configurations.
-      "shawn.ohare" = mkHomeConfiguration rec {
+      "Shawn.OHare" = mkHomeConfiguration rec {
         inherit home-manager inputs;
         host = hosts.work;
       };

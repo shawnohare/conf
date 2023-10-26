@@ -1,0 +1,189 @@
+# NOTE: Alacirtty provides default values, so this config serves as
+# user specific overrides. See the example config in the project repo.
+
+# Font configuration (changes require restart)
+font:
+  # Normal (roman) font face
+  normal:
+    # Font family
+    #
+    # Default:
+    #   - (macOS) Menlo
+    #   - (Linux) monospace
+    #   - (Windows) Consolas
+    # family: "JetBrains Mono"
+    family: "JetBrainsMono Nerd Font"
+
+    # The `style` can be specified to pick a specific face.
+    style: Regular
+
+  # Bold font face
+  bold:
+    # Font family
+    #
+    # If the bold family is not specified, it will fall back to the
+    # value specified for the normal font.
+    # family: monospace
+    family: "JetBrainsMono Nerd Font"
+
+    # The `style` can be specified to pick a specific face.
+    style: Bold
+
+  # Italic font face
+  italic:
+    # Font family
+    #
+    # If the italic family is not specified, it will fall back to the
+    # value specified for the normal font.
+    #family: monospace
+    family: "JetBrainsMono Nerd Font"
+
+    # The `style` can be specified to pick a specific face.
+    style: Italic
+
+  # Bold italic font face
+  bold_italic:
+    # Font family
+    #
+    # If the bold italic family is not specified, it will fall back to the
+    # value specified for the normal font.
+    #family: monospace
+    family: "JetBrainsMono Nerd Font"
+
+    # The `style` can be specified to pick a specific face.
+    style: Bold Italic
+
+  # Point size
+  size: 14.0
+
+  # Offset is the extra space around each character. `offset.y` can be thought of
+  # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
+  offset:
+    x: 0
+    y: 0
+
+  # Glyph offset determines the locations of the glyphs within their cells with
+  # the default being at the bottom. Increasing `x` moves the glyph to the right,
+  # increasing `y` moves the glyph upwards.
+  glyph_offset:
+    x: 0
+    y: 0
+
+  # Thin stroke font rendering (macOS only)
+  #
+  # Thin strokes are suitable for retina displays, but for non-retina screens
+  # it is recommended to set `use_thin_strokes` to `false`
+  #
+  # macOS >= 10.14.x:
+  #
+  # If the font quality on non-retina display looks bad then set
+  # `use_thin_strokes` to `true` and enable font smoothing by running the
+  # following command:
+  #   `defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO`
+  #
+  # This is a global setting and will require a log out or restart to take
+  # effect.
+  use_thin_strokes: true
+
+# If `true`, bold text is drawn using the bright color variants.
+draw_bold_text_with_bright_colors: false
+
+
+colors:
+  primary:
+    background: '#081316'
+    foreground: '#b4babc'
+
+    # Bright and dim foreground colors
+
+    # The dimmed foreground color is calculated automatically if it is not present.
+    # If the bright foreground color is not set, or `draw_bold_text_with_bright_colors`
+    # is `false`, the normal foreground color will be used.
+    # dim_foreground: '0x9a9a9a'
+    # bright_foreground: '0xffffff'
+
+  # Cursor colors
+  #
+  # Colors which should be used to draw the terminal cursor. If these are unset,
+  # the cursor color will be the inverse of the cell color.
+  # cursor:
+  #  text: '0x000000'
+  #  cursor: '0xffffff'
+
+  # Normal colors
+  # - solarizedish colors below
+  # normal:
+  #   black:   '0x073642' # base02
+  #   red:     '0xdc322f' # red
+  #   green:   '0x859900' # green
+  #   yellow:  '0xb58900' # yellow
+  #   blue:    '0x268bd2' # blue
+  #   magenta: '0xd33682' # magenta
+  #   cyan:    '0x2aa198' # cyan
+  #   white:   '0x93a1a1' # base1
+  normal:
+    black: '#001f28'
+    red: '#ff3b41'
+    # orange: '#da7000'
+    yellow: '#979700'
+    green:  '#6ca500'
+    # spring: '#00ad63'
+    cyan: '#00a79a'
+    blue:   '#0098ee'
+    # violet: '#9374ff'
+    magenta: '#eb00e4'
+    # cerise: '#f900b7'
+    # rose: '#ff1f8b'
+    white: '#e0e3e4'
+
+  # Bright colors
+  bright:
+    # solarizedish colors below
+    # black:   '0x586e75' # base01
+    # red:     '0xcb4b16' # orange
+    # green:   '0x859900' # green
+    # yellow:  '0xb58900' # yellow
+    # blue:    '0x268bd2' # blue
+    # magenta: '0x6c71c4' # violet
+    # cyan:    '0x2aa198' # cyan
+    # white:   '0xeee8d5' # base2
+    # hadalized colors below
+    red: '#ff9890'
+    # orange: '#ff9e57'
+    yellow: '#c1c100'
+    green: '#8ad200'
+    # spring:  '#00dc7f'
+    cyan: '#00d5c5'
+    blue: '#75c1ff'
+    # violet: '#b8acff'
+    magenta: '#ff82f6'
+    # cerise: '#ff8cd0'
+    # rose: '#ff92b5'
+
+  # Dim colors
+  #
+  # If the dim colors are not set, they will be calculated automatically based
+  # on the `normal` colors.
+  #dim:
+  #  black:   '0x000000'
+  #  red:     '0x8c3336'
+  #  green:   '0x7a8530'
+  #  yellow:  '0x97822e'
+  #  blue:    '0x506d8f'
+  #  magenta: '0x80638e'
+  #  cyan:    '0x497e7a'
+  #  white:   '0x9a9a9a'
+
+  # Indexed Colors
+  #
+  # The indexed colors include all colors from 16 to 256.
+  # When these are not set, they're filled with sensible defaults.
+  #
+  # Example:
+  #   `- { index: 16, color: '0xff00ff' }`
+  #
+  indexed_colors: []
+
+key_bindings:
+  - { key: E, mods: Control|Shift, action: SpawnNewInstance }
+

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-DIR="${HOME}/nixos-config"
+DIR="${HOME}/conf"
 
 
 _nix_build() {
@@ -39,6 +39,12 @@ switch_system() {
     return 0
 }
 
+# Link configs not managed by home-manager
+_stash() {
+    _cmd="${DIR}/bin/stash/bin/stash"
+    "${_cmd}" "${DIR}/etc/home" "${HOME}"
+}
+
 # rebuild the home-manager configuration
 switch_home() {
     target="$1"
@@ -55,25 +61,35 @@ switch_home() {
     else
         _switch "home-manager" "${target}"
     fi
+    
+    _stash
 
     return 0
 }
 
 
+
 case "$1" in
     --system|-s)
-        switch_system "$2"
+        cmd="switch_system"
+        shift
         ;;
-    -h|--home)
-        switch_home "$2"
+    --user|-u)
+        cmd="switch_home"
+        shift
+        ;;
+    --link|-l)
+        cmd="_stash"
+        shift
         ;;
     --help)
-        echo "switch: Usage. switch [--home | --system] <flake attribute>"
-        echo "switch: Example. switch -h work"
-        exit 0
+        echo "switch: Usage. switch [--user | --system] <flake attribute>"
+        echo "By default, switch a home-manager configuration."
+        echo "Examples: switch --system work, switch work"
+        exit
         ;;
     *)
-        switch_home "$1"
+        cmd="switch_home"
         ;;
 esac
-exit 0
+"${cmd}" "$1"

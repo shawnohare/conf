@@ -1,0 +1,112 @@
+/* Bases */
+/* ------------------------------------------------------------------------ */
+/* i | dark   | light  | canonical | description */
+/* ------------------------------------------------------------------------ */
+/* 0 | base03 | base_3 | C_base_s3_0   | main bg */
+/* 1 | base02 | base_2 | C_base_s1_0   | bg highlights */
+/* 2 | base01 | base_1 | C_base_s2_0   | fg comments */
+/* 3 | base00 | base_0 | C_base_s3_0   | Inactive statusline bg. */
+/* 4 | base_0 | base00 | C_base_s3_1   | fg */
+/* 5 | base_1 | base01 | C_base_s2_1   | fg emphasis, active statusline, bg reversed */
+/* 6 | base_2 | base02 | C_base_s1_1   | ? */
+/* 7 | base_3 | base03 | C_base_s0_1   | Unused(?) (except in contrast shifts). */
+/* ------------------------------------------------------------------------ */
+
+! Bases come in pairs (dim, bright), colors in triples (dim, neutral, bright)
+! The bright / dim variants are used for textual emphasis for
+! in a dark / light theme.
+
+
+#define C_v0_base3_0 #002b36
+#define C_v0_base2_0 #073642
+#define C_v0_base1_0 #586e75
+#define C_v0_base0_0 #657b83
+#define C_v0_base0_1 #839496
+#define C_v0_base1_1 #93a1a1
+#define C_v0_base2_1 #eee8d5
+#define C_v0_base3_1 #fdf6e3
+
+#define C_v1_base5_0  #282828
+#define C_v1_base4_0  #3c3836
+#define C_v1_base3_0  #504945
+#define C_v1_base2_0   #665c54
+#define C_v1_base1_0 #7c6f64
+#define C_v1_base0_0 #928384
+#define C_v1_base0_1 #928384
+#define C_v1_base1_1 #a89984
+#define C_v1_base2_1 #bdae93
+#define C_v1_base3_1 #d5c4a1
+#define C_v1_base4_1 #ebdbb2
+#define C_v1_base5_1 #fbf1c7
+
+
+#define C_v0_black_0  #073642
+#define C_v0_black_1  #073642
+#define C_v0_black_2  #586e75
+
+#define C_v0_red_0  #dc322f
+#define C_v0_red_1  #dc322f
+#define C_v0_red_2  #cb4b16
+
+#define C_v0_green_0  #859900
+#define C_v0_green_1  #859900
+#define C_v0_green_2 #96ad00
+
+#define C_v0_yellow_0  #b58900
+#define C_v0_yellow_1  #b58900
+#define C_v0_yellow_2 #e2ab00
+
+#define C_v0_blue_0  #268bd2
+#define C_v0_blue_1  #268bd2
+#define C_v0_blue_2 #268bd2
+
+#define C_v0_magenta_0  #d33682
+#define C_v0_magenta_1  #d33682
+#define C_v0_magenta_2 #6c71c4
+
+#define C_v0_cyan_0  #2aa198
+#define C_v0_cyan_1  #2aa198
+#define C_v0_cyan_2 #2aa198
+
+#define C_v0_white_0  #93a1a1
+#define C_v0_white_1  #93a1a1
+#define C_v0_white_2 #eee8d5
+
+
+*.foreground:  C_v0_base0_1
+*.background:  C_v0_base3_0
+*.cursorColor: C_v0_base0_1
+
+*.color0:  C_v0_black_1
+*.color1:  C_v0_red_1
+*.color2:  C_v0_green_1
+*.color3:  C_v0_yellow_1
+*.color4:  C_v0_blue_1
+*.color5:  C_v0_magenta_1
+*.color6:  C_v0_cyan_1
+*.color7:  C_v0_white_1
+*.color8:  C_v0_black_2
+*.color9:  C_v0_red_2
+*.color10: C_v0_green_2
+*.color11: C_v0_yellow_2
+*.color12: C_v0_blue_2
+*.color13: C_v0_magenta_2
+*.color14: C_v0_cyan_2
+*.color15: C_v0_white_2
+
+*.dpi: 220
+
+Xft.antialias: true
+Xft.hinting: true
+xft.hintstyle: hintfull
+Xft.dpi: 220
+
+rofi.combi-modi: window,drun,ssh
+rofi.theme: solarized
+rofi.font: monospace 10
+rofi.modi: combi
+rofi.dpi: 220
+
+i3.bg: C_v0_base3_0
+i3.bg2: C_v0_base2_0
+i3.fg: C_v0_base0_1

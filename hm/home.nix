@@ -10,14 +10,14 @@
 in {
   # Let home-manager manage itself.
   imports = [
-    ../programs/readline.nix
-    ../programs/git.nix
-    ../programs/starship.nix
-    ../programs/exa.nix  # TODO: not maintained, remove when ready.
-    # ../programs/eza.nix  # TODO: Might need newer hm version. eza not found.
-    ../programs/zsh.nix
-    ../programs/bash.nix
-    ../programs/tmux.nix
+    programs/readline.nix
+    programs/git.nix
+    programs/starship.nix
+    # programs/exa.nix  # TODO: not maintained, remove when ready.
+    programs/eza.nix  # TODO: Might need newer hm version. eza not found.
+    programs/zsh.nix
+    programs/bash.nix
+    programs/tmux.nix
   ];
 
   home = {
@@ -30,18 +30,71 @@ in {
     stateVersion = lib.mkDefault "${host.stateVersion}";
 
     # The home.packages option allows you to install Nix packages into your
-    # environment.
-    packages = [
+    # home environment. NOTE: do not add home-manager to home.packages or
+    # system packages to avoid collisions.
+    packages = with pkgs; [
       # # Adds the 'hello' command to your environment. It prints a friendly
       # # "Hello, world!" when run.
-      pkgs.home-manager
-      pkgs.hello
+      hello
+
+      alejandra
+      awscli2
+      bash
+      bandwhich
+      bat  # cat clone
+      bottom  # not top
+      cachix
+      # coreutils-prefixed
+      ctags
+      curl
+      delta # diff
+      devbox
+      direnv
+      du-dust # du + rust = dust
+      # entr
+      # NOTE: eza seems to be added in 23.11?
+      # exa  # unmaintained!
+      eza  # maintained version of exa. Keep both in case of re-name.
+      fd
+      fastmod
+      git
+      glow
+      htop
+      hyperfine # benchmarking
+      jq
+      miller
+      moreutils
+      mosh
+      # micromamba
+      # neovim  # NOTE: We like to use newer versions.
+      ncurses
+      nushell
+      pandoc
+      procs # ps replacement
+      q-text-as-data
+      ripgrep
+      rustup  # TODO: Manually install this toolchain?
+      shellcheck
+      sd # simple sed
+      starship
+      tealdeer
+      tectonic
+      tmux
+      tokei
+      uutils-coreutils
+      wget
+      zoxide # like z
+      zsh
 
       # # It is sometimes useful to fine-tune packages, for example, by applying
       # # overrides. You can do that directly here, just don't forget the
       # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
       # # fonts?
-      # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+      (nerdfonts.override {
+        fonts = [
+          "JetBrainsMono"
+        ];
+      })
 
       # # You can also create simple shell scripts directly inside your
       # # configuration. For example, this adds a command 'my-hello' to your
@@ -53,17 +106,20 @@ in {
 
     # Home Manager can symlink config files. The primary way to manage
     # plain files is through 'home.file'.
+    # The actual symlinks point to read-only files,
+    # TODO: This makes tinkering a bit of a pain. Consider
+    # managing non-hm configurations manually.
     file = {
       ".config/" = {
         recursive = true;
-        source = ../etc/config;
+        source = ./etc/config;
       };
-      ".config/ipython/profile_default/ipython_config.py".source = ../etc/ipython/config.py;
+      ".config/ipython/profile_default/ipython_config.py".source = ./etc/ipython/config.py;
       ".local/bin" = {
         recursive = true;
-        source = ../bin;
+        source = ./bin;
       };
-      ".local/bin/switch".source = ../../bin/switch;
+      ".local/bin/switch".source = ../bin/switch;
 
       # # You can also set the file content immediately.
       # ".gradle/gradle.properties".text = ''
@@ -75,11 +131,7 @@ in {
     # NOTE: The shell must be managed by home-manager for env vars and aliases
     # to be available.
     sessionVariables = {
-      _HM_MYVAR = 1;
       LANG = "en_US.UTF-8";
-      # NIXPKGS_CONFIG="${config.xdg.configHome}/nixpkgs/config.nix";
-      # SQITCH_USER_CONFIG="${config.xdg.configHome}/sqitch/config";
-      # STASH_TARGET="${HOME}";
       CARGO_HOME = "${config.xdg.stateHome}/cargo";
       CLICOLOR = "1";
       DOOMDIR = "${config.xdg.configHome}/doom";
@@ -88,7 +140,7 @@ in {
       HOMEBREW_BOOTSNAP = 1;
       HOMEBREW_CELLAR = /opt/homebrew/Cellar;
       HOMEBREW_NO_ANALYTICS = 1;
-      HOMEBREW_NO_AUTO_UPDATE = 1;
+      # HOMEBREW_NO_AUTO_UPDATE = 1;
       HOMEBREW_PREFIX = /opt/homebrew;
       HOMEBREW_REPOSITORY = /opt/homebrew;
       IPYTHONDIR = "${config.xdg.configHome}/ipython";
@@ -131,12 +183,11 @@ in {
       dev = "nix develop";
       mamba = "micromamba";
       conda = "micromamba";
-      pyenvon = "micromamba activate";
-      pyenvoff = "mamba deactivate";
     };
   };
-
+  
   # Defaults to simply enable without much configuration.
+  # More detailed configurations live in ./programs
   programs = {
     bottom.enable = true;
     dircolors.enable = true;
@@ -144,5 +195,7 @@ in {
     htop.enable = true;
     zoxide.enable = true;
   };
+
   xdg.enable = true;
+  fonts.fontconfig.enable = true;
 }

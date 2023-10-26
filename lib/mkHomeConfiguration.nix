@@ -1,4 +1,7 @@
 # This function creates a home-manager configuration.
+# It is intended to be used with standalone home-manager
+# setups, such as thos in a non-NixOS linux environment
+# or macOS without nix-darwin.
 {
   inputs,
   home-manager,
@@ -10,7 +13,7 @@ home-manager.lib.homeManagerConfiguration rec {
   extraSpecialArgs = {inherit inputs host;};
   modules =
     [
-      ../hm/common/home.nix
+      ../hm/home.nix
     ]
     ++ host.hm_modules;
 }

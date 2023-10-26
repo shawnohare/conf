@@ -1,0 +1,37 @@
+# .screenrc
+shell -$SHELL # make every screen session a normal shell session
+
+# ======================================================================
+# GENERAL
+# ======================================================================
+startup_message off
+defscrollback 4096
+altscreen on
+sorendition "= yk" # make messages stand out more
+
+
+# ======================================================================
+# COLORS
+# The initials values caused nvim to have wonky colors.
+# ======================================================================
+# terminfo and termcap for nice 256 color terminal
+# allow bold colors - necessary for some reason
+# attrcolor b ".I"
+# tell screen how to set colors. AB = background, AF=foreground
+# termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+# erase background with current bg color
+# defbce "on"
+# set TERM to be 256 color but still identified as screen
+term screen-256color
+# truecolor support was added in a commit on 2015-07-02 in the master
+# branch.  However, this has not been merged in as of screen v4.4.0
+trucolor on
+
+
+# ======================================================================
+# STATUS LINE
+# ======================================================================
+# backtick 1 30 30 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
+hardstatus off
+hardstatus alwayslastline
+hardstatus string '%{= bk} %H %{= kW} %= %-Lw%{= Wk} %n*%f %t %{-}%+Lw %= %{= kB} %Y-%m-%d | %c '

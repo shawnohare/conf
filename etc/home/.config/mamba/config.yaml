@@ -1,0 +1,7 @@
+auto_activate_base: false
+channels:
+  - conda-forge
+  - defaults
+changeps1: False
+add_pip_as_python_dependency: true
+use_pip: true

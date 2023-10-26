@@ -1,41 +1,47 @@
-# Introduction
+# nixos-config
 
-This configuration flake presently represents an initial exercise into managing
-our system and user configurations via nix flakes and home-manager. Moreover we
-hope it serves as a motivation to investigate NixOS more generally. For this
-reason we purposefully avoid some of the more structured and layered frameworks
-and their utility libraries mentioned in the [References](#References) below,
+This configuration repo primarily consists of a nix flake as an exercise to our
+system / user configurations via nix flakes, home-manager, and standard
+symlink farming.
+
+We hope it serves as a personal motivation to investigate NixOS more generally.
+For this reason we purposefully avoid some of the more structured and layered
+frameworks and their utility libraries mentioned in the
+[References](#References) below,
 but try to take some structural cues.
 
-We maintain another repo of user configurations.
+The primary management options are
 
-# Structure
+1. Use NixOS and include home-manager as a module.
+1. Use nix-darwin on macOS and include home-manager as a module. We have run into
+   some issues with nix-darwin, and currently recommend the next option for macOS.
+1. Use home-manager in a standalone fashion on macOS or non-NixOS distributions.
 
-1. Platform specific configurations are defined by a directory in
-   [system](./system/). In theory these configurations are at the highest level,
+
+## Structure
+
+- [system](./system): Contains platform specific configurations. 
+   In theory these configurations are at the highest level,
    but we suspect that architecture-specific configurations leak into lower
    levels, e.g., with new Apple Silicon based macs.
    Cf. [Mitchell Hashimoto's nixos setup][mitchellh_nixos_config] to see how
    vms are used to abstract some of these nuances away. We may settle upon
    a pattern where some hosts are abstract, to have common files to apply to
-   a company mandated MacBook vs a personal one. This would be obviated to
-   an extent if we worked mostly inside vms for what little development
-   work we do.
-1. [profiles](./profiles/) contains collections of configurations for a specific
+   a company mandated MacBook vs a personal one.
+- [profiles](./profiles/): Contains collections of configurations for a specific
    operating mode, e.g., system-wide package configurations. Our normal
    style is to push most package configurations to the user level.
-1. [hm (home-manager)](./hm) The user-specific program configurations
+- [hm (home-manager)](./hm): The user-specific program configurations
    that will be managed by home-manager. Typicaly these profiles are host
    agnostic to the extent possible.
-1. [lib directory](./lib/) for common library functions used in this flake.
-   These libs will serve to implement some of the boilerplate that gets
-   taken care of by [flake-utils-plus][flake-utils-plus] or [digg][digga].
-   Most likely we will end up using an external library once we are
-   comfortable enough with nix.
-1. [overlays](./overlays) containing package overrides, e.g., to use a
+- [lib directory](./lib/): Common boilerplate library functions used in this
+  flake, e.g., for building nix-darwin and home-manager configurations.
+- [overlays](./overlays) containing package overrides, e.g., to use a
    different channel. Not used much if at all at the moment.
+- [etc](./etc): Configurations not managed by home-manager, but 
+  via a symlink farm manager.
 
-# Install nix
+## Install nix
 
 On platforms other than NixOS, we must first install nix itself in order to
 build the flake.
@@ -51,38 +57,40 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 ```
 The latter installation method is from https://github.com/DeterminateSystems/nix-installer.
 
-# macOS
+## macOS
 
-macOS systems are managed with nix-darwin and home-manager.
+macOS systems can managed with a combination of nix-darwin and home-manager.
 nix-darwin surfaces a NixOS like system configuration for
-macs.
+macs at the system level. The basic options are
 
-## Installation
+1. Build nix-darwin and include home-manager as a nix-darwin module. In theory this
+   option is preferred, but we have run into some stability issues
+1. Build a stand-alone home-manager.
+
+### nix-darwin
 
 We install nix-darwin by building this flake for a specific host. For
 example, `host ∈ {work, macbook, intel, ...}` and should correspond to one of
 `darwinConfigurations` in [flake.nix](./flake.nix).
-
+WARNING: We have runRiIto some NG:bi ity issues when e tempthng ta use vix-darwin. Presentlye runito some biity issues when temptng t use ix-darwin. Presently
 Below are some possible steps to perform after installing nix but
 before switching the configuration with nix-darwin.
 
 Clone and build the flake for a specified target, e.g
 
 ```bash
-git clone https://github.com/shawnohare/nixos-config
-cd nixos-config
+git clone https://github.com/shawnohare/conf
+cd conf
 nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
 result/sw/bin/darwin-rebuild switch --flake ".#${host}"
 ```
-
+mbp2022mbp2022
 Alternatively
 ```bash
 bin/switch --system ${host}
 # for example
-bin/switch --system wmbp2022
+bin/switch --system work
 ```
-
-### nix-darwin Installation Troubleshooting
 
 nix-darwin might fail if it cannot find `/run`. Try
 
@@ -97,7 +105,7 @@ sudo mv /etc/nix/nix.conf /etc/nix/nix-darwin.bak.nix.conf
 sudo mv /etc/shells /etc/nix-darwin.bak.shells
 ```
 
-## Rebuilding
+### nix-darwin rebuilding
 
 After the initialization `darwin-rebuild` is available and the configuration
 can be rebuilt via
@@ -111,9 +119,11 @@ bin/switch --system ${host}
 We must obtain the nix package manager and build the flake, which will
 provide nix-darwin and home-manager.
 
-# home-manager
+## home-manager
 
-To build a home-manager configuration for the first time
+`home-manager` deals with user-level management. For macOS and non-NixOS Linux
+systems it is possible to install home-manager in standalone mode. To do this,
+simply omit the system building steps outlined above.
 
 ```bash
 nix build --extra-experimental-features "nix-command flakes" ".#homeConfigurations.${host}.activationPackage"
