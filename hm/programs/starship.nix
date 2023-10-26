@@ -5,9 +5,6 @@
   username,
   ...
 }: {
-  # Let home-manager manage itself.
-  imports = [
-  ];
 
   programs.starship = {
     enable = true;

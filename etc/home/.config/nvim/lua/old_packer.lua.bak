@@ -1,0 +1,558 @@
+-- ---------------------------------------------------------------------------
+-- Packer managed packages and their configurations
+-- Most package specific configurations can be specified in this file.
+-- ---------------------------------------------------------------------------
+
+-- Bootstrap function to run if packer is not installed.
+local bootstrap = function()
+    local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+    if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+        vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+        vim.api.nvim_command("packadd packer.nvim")
+        return true
+    end
+  return false
+end
+
+local is_bootstrapped = bootstrap()
+
+-- Only required if you have packer configured as `opt`
+-- Apparently it's only loaded on require now anyway?
+-- vim.cmd [[packadd packer.nvim]]
+-- ret
+return require("packer").startup(
+    function(use)
+        -- Packer can manage itself
+        use "wbthomason/packer.nvim"
+
+        use "github/copilot.vim"
+
+        use { "rktjmp/shipwright.nvim" }
+
+        use {
+            "shawnohare/hadalized.nvim",
+            requires = {
+                "rktjmp/lush.nvim",
+            }
+        }
+
+        use {
+            'echasnovski/mini.nvim',
+            config = function()
+                require('mini.align').setup({})
+            end
+        }
+
+        use {
+            "nvim-treesitter/nvim-treesitter",
+            config = function()
+                require("nvim-treesitter.configs").setup {
+                    ensure_installed = "all", -- one of "all", "language", or a list of languages
+                    highlight = {
+                        enable = true,
+                        -- additional_vim_regex_highlighting = {'org'},
+                        -- disable = { "c", "rust"},  -- list of language that will be disabled
+                    },
+                    indent = {
+                      enable = true,
+                      disable = {"python"},
+                      -- disable = {'yaml'},
+                    },
+                    -- incremental_selection = {
+                    --   enable = true,
+                    --   keymaps = {
+                    --     init_selection = "gnn",
+                    --     node_incremental = "grn",
+                    --     scope_incremental = "grc",
+                    --     node_decremental = "grm",
+                    --   },
+                    -- },
+                    -- refactor = {
+                    --   highlight_definitions = {
+                    --    enable = true,
+                    --  },
+                    --},
+                }
+            end
+        }
+
+        -- NOTE: Kept receiving startup error.
+        -- use {
+        --     'nvim-orgmode/orgmode',
+        --     config = function()
+        --         local orgmode = require('orgmode')
+        --         -- orgmode.setup_ts_grammer()
+        --         orgmode.setup{}
+        --     end
+        -- }
+
+        use {
+            'nvim-lualine/lualine.nvim',
+            requires = { 'kyazdani42/nvim-web-devicons'},
+            config = function()
+                require('lualine').setup()
+             end
+        }
+
+        use {
+            'windwp/nvim-autopairs',
+            config = function()
+                require("nvim-autopairs").setup({})
+            end
+
+        }
+
+        use {
+            'hrsh7th/nvim-cmp',
+            requires = {
+                'hrsh7th/cmp-nvim-lua',
+                'hrsh7th/cmp-nvim-lsp',
+                'hrsh7th/cmp-buffer',
+                'hrsh7th/cmp-path',
+                'hrsh7th/cmp-cmdline',
+                'saadparwaiz1/cmp_luasnip',
+                'petertriho/cmp-git',
+                "onsails/lspkind-nvim",
+            },
+            config = function()
+                local cmp = require("cmp")
+                local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+                local lspkind = require("lspkind")
+
+                cmp.setup({
+                    formatting = {
+                        format = lspkind.cmp_format({
+                            mode = "symbol_text",
+                            -- preset = 'codicons'
+                            -- Can add more control.
+                            before = function(entry, vim_item)
+                                return vim_item
+                            end
+
+                        })
+                    },
+                    snippet = {
+                      -- REQUIRED - you must specify a snippet engine
+                      expand = function(args)
+                        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+                        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+                      end,
+                    },
+                    window = {
+                      completion = cmp.config.window.bordered(),
+                      documentation = cmp.config.window.bordered(),
+                    },
+                    mapping = cmp.mapping.preset.insert({
+                      -- ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                      -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                      ['<C-Space>'] = cmp.mapping.complete(),
+                      ['<C-e>'] = cmp.mapping.abort(),
+                      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+                    }),
+                    sources = cmp.config.sources({
+                      { name = 'nvim_lsp' },
+                      { name = 'nvim_lua' },
+                      -- { name = 'vsnip' }, -- For vsnip users.
+                      { name = 'luasnip' }, -- For luasnip users.
+                      -- { name = 'ultisnips' }, -- For ultisnips users.
+                      -- { name = 'snippy' }, -- For snippy users.
+                    }, {
+                      { name = 'buffer' },
+                    })
+                  })
+
+                  -- Set configuration for specific filetype.
+                  cmp.setup.filetype('gitcommit', {
+                    sources = cmp.config.sources({
+                      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+                    }, {
+                      { name = 'buffer' },
+                    })
+                  })
+
+                  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+                  cmp.setup.cmdline('/', {
+                    mapping = cmp.mapping.preset.cmdline(),
+                    sources = {
+                      { name = 'buffer' }
+                    }
+                  })
+
+                  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+                  cmp.setup.cmdline(':', {
+                    mapping = cmp.mapping.preset.cmdline(),
+                    sources = cmp.config.sources({
+                      { name = 'path' }
+                    }, {
+                      { name = 'cmdline' }
+                    })
+                  })
+
+                  cmp.event:on(
+                    'confirm_done',
+                    cmp_autopairs.on_confirm_done()
+                  )
+            end
+        }
+
+
+        -- ------------------------------------------------------------------------
+        -- LSP
+        -- ------------------------------------------------------------------------
+        use {
+            "williamboman/mason.nvim",
+            config = function()
+                local mason = require("mason")
+                mason.setup({
+                    ui = {
+                        icons = {
+                            package_installed = "✓",
+                            package_pending = "➜",
+                            package_uninstalled = "✗",
+                        },
+                    },
+                })
+            end
+        }
+
+        use {
+            "williamboman/mason-lspconfig.nvim",
+            config = function()
+            end
+        }
+
+        use {
+            "neovim/nvim-lspconfig",
+            requires = {
+                "williamboman/mason.nvim",
+                "williamboman/mason-lspconfig.nvim",
+            },
+            after = "nvim-cmp",
+            config = function()
+                local lspconfig = require("lspconfig")
+                local mason_lspconfig = require("mason-lspconfig")
+
+                -- Default args to merge into global lsp configs.
+                local defaults = {
+                    flags = {
+                        debounce_text_changes = 150,
+                    },
+                    capabilities = require('cmp_nvim_lsp').default_capabilities(
+                        vim.lsp.protocol.make_client_capabilities()
+                    ),
+                    on_attach = function(client, bufnr)
+                        vim.api.nvim_exec_autocmds('User', {pattern = 'LspAttached'})
+                    end
+                }
+
+                -- Update global default config to apply to all servers.
+                lspconfig.util.default_config = vim.tbl_deep_extend(
+                  'force',
+                  lspconfig.util.default_config,
+                  defaults
+                )
+
+                -- Server specific overrides.
+                local server_configs = {
+                    sumneko_lua = {
+                        settings = {
+                            Lua = {
+                                diagnostics = {
+                                    globals = {"vim", "hs"}
+                                }
+                            }
+                        }
+                    }
+                }
+
+                mason_lspconfig.setup({
+                  ensure_installed = {
+                    -- "eslint-lsp",
+                    -- "rome",
+                    -- "terraform-ls",
+                    -- "tflint",
+                    -- "typescript-language-server",
+                    "sumneko_lua",
+                    "pyright",
+
+                    -- "yaml-language-server",
+                    -- "yamllint",
+                    -- "pyright",
+                    -- "pylint",
+                  }
+                })
+                mason_lspconfig.setup_handlers({
+                  function (server_name)
+                    local sconf = server_configs[server_name]
+                    if sconf == nil then
+                        sconf = {}
+                    end
+                    -- probably want to merge this in to some other default?
+                    -- sconf.on_attach = require("shared").on_attach,
+
+
+                    require("lspconfig")[server_name].setup(sconf)
+                  end
+                })
+
+            end
+        }
+
+        -- -------------------------------------------------------------------
+        -- snippets
+        -- -------------------------------------------------------------------
+        use {
+            'L3MON4D3/LuaSnip',
+            requires = {
+                'rafamadriz/friendly-snippets',
+
+            },
+            -- after = 'nvim-cmp',
+            config = function()
+                -- FIXME: loaders nil
+                -- local luasnip = require("luasnip")
+                -- luasnip.loaders.from_vscode.lazy_load()
+            end
+        }
+
+        use {
+            "folke/trouble.nvim",
+            requires = "kyazdani42/nvim-web-devicons",
+            config = function()
+                require("trouble").setup {}
+            end
+        }
+
+        use {
+            "nvim-telescope/telescope-fzf-native.nvim",
+            run = "make"
+        }
+
+        use {
+            "nvim-telescope/telescope.nvim",
+            requires = {{"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"}},
+            config = function()
+                require("telescope").setup {
+                    extensions = {
+                        fzf = {
+                            fuzzy = true,
+                            override_generic_sorter = true,
+                            override_file_sorter = true,
+                            case_mode = "smart_case"
+                        }
+                    }
+                }
+                -- require('telescope').load_extension('projects')
+                require("telescope").load_extension("fzf")
+                --   require('telescope').setup {
+                --     defaults = {
+                --       vimgrep_arguments = {
+                --         'rg',
+                --         '--color=never',
+                --         '--no-heading',
+                --         '--with-filename',
+                --         '--line-number',
+                --         '--column',
+                --         '--smart-case'
+                --      },
+                --       prompt_position = "bottom",
+                --       prompt_prefix = "> ",
+                --       selection_caret = "> ",
+                --       entry_prefix = "  ",
+                --       initial_mode = "insert",
+                --       selection_strategy = "reset",
+                --       sorting_strategy = "descending",
+                --       layout_strategy = "horizontal",
+                --       layout_defaults = {
+                --         horizontal = {
+                --           mirror = false,
+                --        },
+                --         vertical = {
+                --           mirror = false,
+                --        },
+                --      },
+                --       file_sorter =  require'telescope.sorters'.get_fuzzy_file,
+                --       file_ignore_patterns = {},
+                --       generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
+                --       shorten_path = true,
+                --       winblend = 0,
+                --       width = 0.75,
+                --       preview_cutoff = 120,
+                --       results_height = 1,
+                --       results_width = 0.8,
+                --       border = {},
+                --       borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰'},
+                --       color_devicons = true,
+                --       use_less = true,
+                --       set_env = { ['COLORTERM'] = 'truecolor'}, -- default = nil,
+                --       file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
+                --       grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
+                --       qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
+
+                --       -- Developer configurations: Not meant for general override
+                --       buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
+                --     }
+                --   }
+            end
+        }
+
+        use {
+            "tpope/vim-commentary",
+            "tpope/vim-repeat",
+            "tpope/vim-endwise"
+        }
+
+
+        use {
+            "lewis6991/gitsigns.nvim",
+            requires = {"nvim-lua/plenary.nvim"},
+            config = function()
+                require("gitsigns").setup()
+            end
+        }
+
+        use {
+            'TimUntersberger/neogit',
+            requires = 'nvim-lua/plenary.nvim',
+            config = function()
+                local neogit = require('neogit')
+                neogit.setup()
+            end
+        }
+
+        use {
+            "lewis6991/spaceless.nvim",
+            config = function()
+                require("spaceless").setup()
+            end
+        }
+
+        use {
+            "kyazdani42/nvim-tree.lua",
+            requires = "kyazdani42/nvim-web-devicons",
+            config = function()
+                require("nvim-tree").setup({})
+            end
+        }
+
+        use {
+            "folke/which-key.nvim",
+            config = function()
+                local wk = require("which-key")
+                wk.setup()
+                wk.register({
+                    ["g"] = {
+                        R = {"<cmd>TroubleToggle lsp_references<cr>", "lsp references"},
+                        d = {"<cmd>lua vim.lsp.buf.definition()<cr>", "definition"},
+                    },
+                    ["<leader>"] = {
+                        b = {
+                            name = "+buffer",
+                            b = {"<cmd>Telescope buffers<cr>", "buffers"},
+                            d = {"<cmd>bd<cr>", "delete"},
+                            e = {"<cmd>enew<cr>", "new"},
+                            h = {"<cmd>bp<cr>", "previous"},
+                            l = {"<cmd>bn<cr>", "next"},
+                            n = {"<cmd>enew<cr>", "new"},
+                            p = {"<cmd>bp<cr>", "previous"},
+                            s = {"<cmd>split<cr>", "split"},
+                            v = {"<cmd>vsplit<cr>", "vert split"},
+                        },
+                        d = {
+                            name = "+debug",
+                            b = {"<cmd>lua require'dap'.toggle_breakpoint()<cr>", "toggle breakpoint"},
+                            c = {"<cmd>lua require'dap'.continue()<cr>", "continue"},
+                            i = {"<cmd>lua require'dap'.step_into()<cr>", "step into"},
+                            o = {"<cmd>lua require'dap'.step_over()<cr>", "step over"},
+                            u = {"<cmd>lua require'dap'.step_out()<cr>", "step out"},
+                            r = {"<cmd>lua require'dap'.repl.open()<cr>", "repl"},
+                            s = {"<cmd>lua require'dap'.continue()<cr>", "start"},
+                        },
+                        f = {
+                            name = "+find",
+                            b = {"<cmd>Telescope buffers<cr>", "buffers"},
+                            e = {"<cmd>NvimTreeToggle<cr>", "explorer"},
+                            f = {"<cmd>Telescope find_files<cr>", "files"},
+                            g = {"<cmd>Telescope live_grep<cr>", "grep"},
+                            h = {"<cmd>Telescope help_tags<cr>", "help"},
+                            m = {"<cmd>Telescope marks<cr>", "marks"},
+                            r = {"<cmd>Telescope oldfiles<cr>", "recent files"},
+                            t = {"<cmd>TodoTelescope<cr>", "todos"},
+                            w = {"<cmd>Telescope file_browser<cr>", "file browser"},
+                        },
+                        g = {
+                            name = "+git",
+                            b = {"<cmd>Neogit branch<cr>", "branch"},
+                            c = {"<cmd>Neogit commit<cr>", "commit"},
+                            s = {"<cmd>Neogit<cr>", "status"},
+                            -- b = {"<cmd>Telescope git_branches<cr>", "branch"},
+                            -- c = {"<cmd>Telescope git_commits<cr>", "commit"},
+                            -- s = {"<cmd>Telescope git_status<cr>", "status"},
+                        },
+                        h = {
+                            name = "+help",
+                            h = {"<cmd>Telescope help_tags<cr>", "help"},
+                            t = {"<cmd>TodoTelescope<cr>", "todos"},
+                            k = {"<cmd>Telescope keymaps<cr>", "keymaps"},
+                        },
+                        l = {
+                            name = "+lsp",
+                            D = {"<cmd>lua vim.lsp.buf.declaration()<cr>", "declaration"},
+                            R = {"<cmd>lua vim.lsp.buf.references()<cr>", "references"},
+                            S = {"<cmd>lua vim.lsp.buf.workspace_symbol()<cr>", "workspace symbols"},
+                            a = {"<cmd>lua vim.lsp.buf.code_action()<cr>", "code action"},
+                            d = {"<cmd>lua vim.lsp.buf.definition()<cr>", "definition"},
+                            f = {"<cmd>lua vim.lsp.buf.formatting()<cr>", "format"},
+                            h = {"<cmd>lua vim.lsp.buf.hover()<cr>", "hover"},
+                            i = {"<cmd>lua vim.lsp.buf.implementation()<cr>", "implementation"},
+                            r = {"<cmd>lua vim.lsp.buf.rename()<cr>", "rename"},
+                            s = {"<cmd>lua vim.lsp.buf.document_symbol()<cr>", "document symbols"},
+                            t = {"<cmd>lua vim.lsp.buf.type_definition()<cr>", "type definition"},
+                        },
+                        x = {
+                            name = "+trouble (diagnostics)",
+                            x = {"<cmd>TroubleToggle<cr>", "toggle"},
+                            w = {"<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace diagnostics"},
+                            d = {"<cmd>TroubleToggle document_diagnostics<cr>", "document diagnostics"},
+                            l = {"<cmd>TroubleToggle loclist<cr>", "location list"},
+                            q = {"<cmd>TroubleToggle quickfix<cr>", "quickfix"},
+                            r = {"<cmd>TroubleToggle lsp_references<cr>", "lsp references"},
+                            f = {"<cmd>lua vim.diagnostic.open_float()<CR>"},
+                            -- l = {"<cmd>lua vim.diagnostic.setloclist()<CR>"},
+                            n = {"<cmd>lua vim.diagnostic.goto_next()<CR>"},
+                            p = {"<cmd>lua vim.diagnostic.goto_prev()<CR>"},
+                            -- q = {"<cmd>lua vim.diagnostic.setqflist()<CR>"}
+                        },
+                    },
+                })
+            end
+        }
+
+        ---- TODO:
+        ---- NOTE: Want to like this, but can't disable highlights.
+        --use {
+        --    "folke/todo-comments.nvim",
+        --    requires = "nvim-lua/plenary.nvim",
+        --    config = function()
+        --        require("todo-comments").setup (
+        --            {
+        --                highlight = {
+        --                    keyword = 'fg',
+        --                    after = '',
+        --                    comments_only = true,
+        --                },
+        --            }
+        --        )
+        --    end
+        --}
+
+        -- TODO: Unclear if this actually works.
+        if is_bootstrapped then
+            local packer = require('packer')
+            local lockfile = vim.fn.stdpath('config') .. '/packer/Lockfile.json'
+            packer.rollback(lockfile)
+        end
+    end
+)

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# NOTE: See comments in ~/.xinitrc about
+# which files are run in various scenarios.
+# For Ubuntu, it looks like ~/.xsessionrc is loaded.
+
+xrdb -merge ~/.Xresources
+exec i3

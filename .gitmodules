@@ -1,0 +1,3 @@
+[submodule "bin/stash"]
+	path = bin/stash
+	url = https://github.com/shawnohare/stash

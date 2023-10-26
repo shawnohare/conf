@@ -28,6 +28,7 @@
       fi
     '';
 
+    # TODO: Consider moving most of these to home-manager.
     systemPackages = with pkgs; [
       alejandra
       awscli2
