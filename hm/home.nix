@@ -110,10 +110,10 @@ in {
     # TODO: This makes tinkering a bit of a pain. Consider
     # managing non-hm configurations manually.
     file = {
-      ".config/" = {
-        recursive = true;
-        source = ./etc/config;
-      };
+      # ".config/" = {
+      #   recursive = true;
+      #   source = ./etc/config;
+      # };
       ".config/ipython/profile_default/ipython_config.py".source = ./etc/ipython/config.py;
       ".local/bin" = {
         recursive = true;
@@ -185,7 +185,7 @@ in {
       conda = "micromamba";
     };
   };
-  
+
   # Defaults to simply enable without much configuration.
   # More detailed configurations live in ./programs
   programs = {
