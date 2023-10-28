@@ -40,9 +40,11 @@ switch_system() {
 }
 
 # Link configs not managed by home-manager
+# Wrapper around stash.
 _stash() {
     _cmd="${DIR}/bin/stash/bin/stash"
-    "${_cmd}" "${DIR}/etc/home" "${HOME}"
+    "${_cmd}" "$@" "${DIR}/etc/home" "${HOME}"
+    "${_cmd}" "$@" "${DIR}/etc/config" "${HOME}/.config"
 }
 
 # rebuild the home-manager configuration
@@ -62,7 +64,7 @@ switch_home() {
         _switch "home-manager" "${target}"
     fi
     
-    _stash
+    _stash --force
 
     return 0
 }
@@ -70,26 +72,27 @@ switch_home() {
 
 
 case "$1" in
-    --system|-s)
-        cmd="switch_system"
+    --system|-s|system)
+        switch_system "$2"
+        exit
+        ;;
+    --user|-u|user)
+        switch_home "$2"
         shift
         ;;
-    --user|-u)
-        cmd="switch_home"
+    --link|-l|ln|link)
         shift
-        ;;
-    --link|-l)
-        cmd="_stash"
-        shift
+        _stash "$@"
+        exit
         ;;
     --help)
-        echo "switch: Usage. switch [--user | --system] <flake attribute>"
-        echo "By default, switch a home-manager configuration."
-        echo "Examples: switch --system work, switch work"
+        echo 'switch: Usage. switch <user|system> <flake attribute>'
+        echo 'switch: Usage. switch link [stash options]'
+        echo 'By default, switch a home-manager configuration.'
+        echo 'Examples: switch --system work, switch work'
         exit
         ;;
     *)
-        cmd="switch_home"
+        switch_home
         ;;
 esac
-"${cmd}" "$1"

@@ -6,6 +6,7 @@
 }: {
   programs.zsh = {
     enable = true;
+
     autocd = true;
     dotDir = ".config/zsh";
     # builtin plugins.
@@ -53,7 +54,8 @@
       autoload -U zmv
       autopair-init
 
-      bindkey "^L" autosuggest-accept
+      # Align with warp.
+      bindkey "^F" autosuggest-accept
 
       # NOTE: These might be declared by home-manager.
       # declare -A ZSH_HIGHLIGHT_STYLES
