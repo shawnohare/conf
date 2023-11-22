@@ -1,27 +1,105 @@
 #!/usr/bin/env sh
 
+# Set global vars used in this script.
 DIR="${HOME}/conf"
+_STASH="${DIR}/lib/stash/bin/stash"
+
+# Check if we are on macos.
+if [ "$(uname -s)" = "Darwin" ]; then
+    REBUILD_CMD="darwin-rebuild"
+    APP_CONFIG="${HOME}/Library/Application Support"
+    FIREFOX_PROFILES_DIR="${HOME}/Library/Application Support/Firefox/Profiles"
+    LIBREWOLF_PROFILES_DIR="${HOME}/Library/Application Support/librewolf/Profiles"
+else
+    REBUILD_CMD="nixos-rebuild"
+    APP_CONFIG="${HOME}/Library/Application Support"
+    FIREFOX_PROFILES_DIR="${HOME}/.mozilla/firefox"
+    LIBREWOLF_PROFILES_DIR="${HOME}/.librewolf"
+fi
+
+usage() {
+    cat <<EOF
+Usage:
+    switch home [attribute]
+    switch system [attribute]
+    switch ln [options]
+
+Commands:
+    home   - Use home-manager and stash to update user configuration.
+    system - Update system settings in nixos or nix-darwin.
+    ln     - Link configuration files not handled by home-manager.
+
+Options:
+    -h|--help          Display this this usage message.
+EOF
+}
+
+usage_home() {
+    cat <<EOF
+Usage:
+    switch home [attribute]
+
+Args:
+    attribute: An attribute in the ${DIR}/flake.nix homeConfigurations output.
+        Defaults to the current username.
+
+Options:
+    -h|--help          Display this this usage message.
+EOF
+}
+
+usage_system() {
+    cat <<EOF
+Usage:
+    switch system [attribute]
+
+Args:
+    attribute: An attribute in the ${DIR}/flake.nix nixosConfigurations or darwinConfigurations output.
+
+Options:
+    -h|--help          Display this this usage message.
+EOF
+}
+
+usage_ln() {
+    cat <<EOF
+Usage:
+    switch ln [options]
+
+Description:
+    Link configuration files not handled by home-manager. This is a thin
+    wrapper around the stash symlink manager. All files to be linked should
+    live in ${DIR}/etc.
+
+Options:
+    -h|--help          Display this this usage message.
+
+Displaying help for ${_STASH}:
+
+EOF
+    "${_STASH}" --help
+}
 
 
 _nix_build() {
-    echo "switch: Building initial flake $1"
+    echo "switch: Building flake $1"
     nix --verbose --show-trace --extra-experimental-features "nix-command flakes" build "${DIR}/#$1"
 }
 
-# Wrapper for nixos-rebuild, darwin-rebuild, and home-manager which all
-# expose the "switch" subcommand.
 _switch() {
-    cmd="$1"
+    # usage: _switch cmd [attr]
+    # Wrapper for nixos-rebuild, darwin-rebuild, and home-manager which all
+    # expose the "switch" subcommand.
     if [ -z "$2" ]; then
         attr="$DIR"
     else
         attr="$DIR/#$2"
     fi
-    "${cmd}" --show-trace --verbose switch --flake "${attr}"
+    "$1" --show-trace --verbose switch --flake "${attr}"
 }
 
-# rebuild the system configuration.
 switch_system() {
+    # rebuild the system configuration.
     target="$1"
     if [ "$(uname -s)" = "Darwin" ]; then
         cmd="darwin-rebuild"
@@ -39,16 +117,16 @@ switch_system() {
     return 0
 }
 
-# Link configs not managed by home-manager
-# Wrapper around stash.
-_stash() {
-    _cmd="${DIR}/bin/stash/bin/stash"
-    "${_cmd}" "$@" "${DIR}/etc/home" "${HOME}"
-    "${_cmd}" "$@" "${DIR}/etc/config" "${HOME}/.config"
+switch_ln() {
+    # Define which files get linked here.
+    "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
+    # Link custom firefox CSS files.
+    "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${FIREFOX_PROFILES_DIR}"/*default-release -maxdepth 0 -type d)/chrome"
+    "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${LIBREWOLF_PROFILES_DIR}"/*default-default -maxdepth 0 -type d)/chrome"
 }
 
-# rebuild the home-manager configuration
 switch_home() {
+    # rebuild the home-manager configuration
     target="$1"
     if [ -z "${target}" ]; then
         target="$(whoami)"
@@ -64,35 +142,34 @@ switch_home() {
         _switch "home-manager" "${target}"
     fi
     
-    _stash --force
+    switch_ln --force
 
     return 0
 }
 
 
 
+# Parse subcommands.
 case "$1" in
-    --system|-s|system)
-        switch_system "$2"
-        exit
-        ;;
-    --user|-u|user)
-        switch_home "$2"
+    system|home|ln)
+        cmd="$1"
         shift
-        ;;
-    --link|-l|ln|link)
-        shift
-        _stash "$@"
-        exit
-        ;;
-    --help)
-        echo 'switch: Usage. switch <user|system> <flake attribute>'
-        echo 'switch: Usage. switch link [stash options]'
-        echo 'By default, switch a home-manager configuration.'
-        echo 'Examples: switch --system work, switch work'
-        exit
         ;;
     *)
-        switch_home
+        usage
+        exit
         ;;
 esac
+
+# Parse subcommand args.
+case "$1" in
+    --help|-h)
+        "usage_${cmd}"
+        ;;
+    *)
+        "switch_${cmd}" "$@"
+        exit
+        ;;
+esac
+
+

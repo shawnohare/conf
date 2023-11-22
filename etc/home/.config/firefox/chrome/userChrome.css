@@ -1,0 +1,13 @@
+/* How to use */
+/* - Open firefox (or any browser fork). */
+/* - Input `about:config` into search bar. */
+/* - Set `toolkit.legacyUserProfileCustomizations.stylesheets = true` */
+/* - Input `about:support` in the search bar. */
+/* - Look for Profile Directory path. */
+/* - Copy `chrome/userChrome.css` to this folder. */
+/* - Restart browser. */
+
+/* hides the native tabs */
+#TabsToolbar {
+  visibility: collapse;
+}
