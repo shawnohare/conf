@@ -14,6 +14,59 @@
     enableCompletion = true;
     syntaxHighlighting = {
         enable = true;
+        styles = {
+          alias = "fg=blue,italic";
+          arg0 = "fg=yellow";
+          assign = "none";
+          # back-dollar-quoted-argument = "none"
+          # back-double-quoted-argument = "green"
+          # back-quoted-argument-delimiter = "none"
+          # back-quoted-argument-unclosed = "fg=red"
+          # back-quoted-argument = "none"
+          bracket-error = "fg=red,bold";
+          bracket-level-1 = "fg=white,bold";
+          bracket-level-2 = "fg=yellow,bold";
+          bracket-level-3 = "fg=green,bold";
+          bracket-level-4 = "fg=magenta,bold";
+          builtin = "fg=yellow,italic";
+          # command-substitution-delimiter-quoted = "none"
+          # command-substitution-delimiter-unquoted = "none"
+          # command-substitution-delimiter = "none"
+          # command-substitution-quoted = "none"
+          # command-substitution-unquoted = "none"
+          # command-substitution = "none"
+          command = "fg=magenta,italic";
+          # commandseparator = "none"
+          comment = "fg=gray";
+          cursor-matchingbracket = "fg=black,bg=red";
+          # cursor = "bg=black"
+          dollar-double-quoted-argument = "fg=cyan";
+          dollar-quoted-argument-unclosed = "fg=red";
+          dollar-quoted-argument = "fg=cyan";
+          double-hyphen-option = "fg=green";
+          double-quoted-argument-unclosed = "fg=red";
+          double-quoted-argument = "fg=cyan";
+          function = "fg=blue";
+          globbing = "fg=red";
+          # hashed-command = "none"
+          history-expansion = "none";
+          # named-fd = "none"
+          path = "fg=blue,bold";
+          # path_pathseparator = "fg=yellow"
+          # path_prefix = "none"
+          # path_prefix_pathseparator = "none"
+          # precommand = "fg=yellow"
+          # process-substitution-delimiter = "none"
+          # process-substitution = "none"
+          # rc-quote = "none"
+          redirection = "fg=red";
+          reserved-word = "fg=red,italic";
+          single-hyphen-option = "fg=green";
+          single-quoted-argument-unclosed = "fg=red";
+          single-quoted-argument = "fg=green";
+          # suffix-alias = "yellow"
+          # unknown-token = "none"
+        };
     };
 
     shellAliases = {
@@ -57,16 +110,13 @@
       # Align with warp.
       bindkey "^F" autosuggest-accept
 
-      # NOTE: These might be declared by home-manager.
-      # declare -A ZSH_HIGHLIGHT_STYLES
-      # ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor root)
-
       # hooks not supported by home-manager
+      eval "$(devbox global shellenv --init-hook)" 2&> /dev/null
       eval "$(micromamba shell hook --shell=zsh)" 2&> /dev/null
     '';
 
     # Plugins not natively supported by home-manager.
-    # These will git cloned and sourced, so there's little overhead.
+    # These will git cloned and sourced, so there is little overhead.
     plugins = with pkgs; [
       {
         name = "zsh-autopair";
