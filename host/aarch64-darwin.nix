@@ -5,12 +5,11 @@
   inputs,
   pkgs,
   home-manager,
-  user,
+  target,
   ...
 }: {
-  # Import cross-platform system configuration.
   imports = [
-    ../common/configuration.nix
-    ../macos/configuration.nix
+    ./default.nix
+    ./macos.nix
   ];
 }

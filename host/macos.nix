@@ -10,28 +10,34 @@
 }: {
   # Import cross-platform system configuration.
   imports = [
-    ../common/configuration.nix
   ];
 
   # macos specific aliases. These could be put in a common file and
   # have a switch based on system type, but for now we make it explicit.
   environment = {
     shellAliases = {
-      nrb = "darwin-rebuild switch --flake";
+      # nrb = "darwin-rebuild switch --flake";
     };
   };
 
-  # homebrew = {
-  #   enable = false;
-  #   autoUpdate = false;
-  #   cleanup = "zap";
-  #   brews = [
-  #   ];
-  #   casks = [
-  #     "jetbrains-toolbox"
-  #     "alfred"
-  #   ];
-  # };
+  homebrew = {
+    enable = true;
+    # onActivation.autoUpdate = False;
+    # onActivation.cleanup = "zap";
+    # onActivation.upgrade = False;
+    brews = [
+    ];
+    casks = [
+      "firefox"
+      "hammerspoon"
+      "jetbrains-toolbox"
+      "linearmouse"
+      "rectangle"
+      "wezterm"
+      "warp"
+    ];
+    taps = [];
+  };
 
   # macOS system defaults configuration that normally occurr through UI.
   security = {
@@ -42,7 +48,7 @@
       NSGlobalDomain = {
         AppleKeyboardUIMode = 3;
         ApplePressAndHoldEnabled = false;
-        InitialKeyRepeat = 10;
+        InitialKeyRepeat = 20;
         KeyRepeat = 2;
         NSAutomaticCapitalizationEnabled = false;
         NSAutomaticDashSubstitutionEnabled = false;
@@ -75,7 +81,7 @@
     };
     keyboard = {
       enableKeyMapping = true;
-      remapCapsLockToControl = true;
+      # remapCapsLockToControl = true;
     };
   };
 }

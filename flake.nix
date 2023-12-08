@@ -16,14 +16,18 @@
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
 
-    # nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    # stable nixpkgs
+    nixpkgs-stable.url = "github:nixos/nixpkgs/release-23.11";
+    nixpkgs-stable-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
+    # unstable nixpkgs (can be used to get more frequent updates)
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
 
     home-manager = {
+      # stable must be linked to the corresponding nixpkgs stable
       # url = "github:nix-community/home-manager/release-23.05";
+      # url = "github:nix-community/home-manager/release-23.11";
+      # unstable
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -73,33 +77,65 @@
   }: let
     mkDarwin = import ./lib/mkDarwin.nix;
     mkHomeConfiguration = import ./lib/mkHomeConfiguration.nix;
-    stateVersion = "23.11";
-    hosts = {
+
+    # Each target context effectively represents a profile
+    # for a specific host. That is, a specification of system
+    # and user configurations.
+    # Each target can have the following attributes
+    # - user.name: The hardcoded username used in both system and home configs.
+    # - host.config: The system level configuration to use with nixOS or nix-darwin.
+    # - host.system: The system architecture and OS string.
+    # - home.config: The user level configuration to use with home-manager.
+    # - home.nixpkgs: The version of nixpkgs to use to set the pkgs attribute
+    # - home.stateVersion: The home-manager state version.
+    #   in a standalone home-manager context.
+    targets = rec {
+      # Default settings for hosts / machines.
+      default = {
+        home.stateVersion = "23.11";
+        home.config = "default.nix";
+      };
+
+      macos.arm = {
+        host.system = "aarch64-darwin";
+        host.config = "aarch64-darwin.nix";
+        home.stateVersion = default.home.stateVersion;
+        home.config = default.home.config;
+        home.nixpkgs = inputs.nixpkgs-darwin;
+      };
+
+      macos.intel = {
+        host.system = "x86_64-darwin";
+        host.config = "x86_64-darwin.nix";
+        home = macos.arm.home;
+      };
+
+      nixos = {
+        host.config = "nixos.nix";
+        home.stateVersion = default.home.stateVersion;
+        home.config = default.home.config;
+        home.nixpkgs = inputs.nixpkgs;
+      };
+
+      # Target hosts / machines.
       work = {
-        username = "Shawn.OHare";
-        system = "aarch64-darwin";
-        nixpkgs = inputs.nixpkgs-darwin;
-        profile = "default";
-        stateVersion = "${stateVersion}";
-        hm_modules = [];
+        user.name = "Shawn.OHare";
+        host = macos.arm.host;
+        home = macos.arm.home;
         overlays = 0;
       };
+
       mbp2016 = {
-        username = "shawn";
-        system = "x86_64-darwin";
-        nixpkgs = inputs.nixpkgs-darwin;
-        profile = "default";
-        stateVersion = "${stateVersion}";
-        hm_modules = [];
+        user.name = "shawn";
+        host = macos.intel.host;
+        home = macos.intel.home;
         overlays = 0;
       };
+
       mba2022 = {
-        username = "shawn";
-        system = "aarch64-darwin";
-        nixpkgs = inputs.nixpkgs-darwin;
-        profile = "default";
-        stateVersion = "${stateVersion}";
-        hm_modules = [];
+        user.name = "shawn";
+        host = macos.arm.host;
+        home = macos.arm.home;
         overlays = 0;
       };
     };
@@ -119,21 +155,14 @@
     # transitioning to a stand-alone home-manager set up so that
     # home configurations can work in general Linux environments.
     darwinConfigurations = {
-      mbp2016 = mkDarwin rec {
+      mbp2016 = mkDarwin {
         inherit darwin home-manager inputs;
-        host = hosts.mbp2016;
+        target = targets.mbp2016;
       };
 
-      work = mkDarwin rec {
+      work = mkDarwin {
         inherit darwin home-manager inputs;
-        host = hosts.work;
-      };
-
-      # configs keyed with user names allow simply running `switch -s` to update
-      # system configurations.
-      "shawn.ohare" = mkDarwin rec {
-        inherit darwin home-manager inputs;
-        host = hosts.work;
+        target = targets.work;
       };
     };
 
@@ -143,21 +172,21 @@
     # TODO: We should be able to use "forEachSystem" here to generate
     # configs for each system that use the appropriate pkgs.
     homeConfigurations = {
-      work = mkHomeConfiguration rec {
+      work = mkHomeConfiguration {
         inherit home-manager inputs;
-        host = hosts.work;
+        target = targets.work;
       };
 
-      shawn = mkHomeConfiguration rec {
+      shawn = mkHomeConfiguration {
         inherit home-manager inputs;
-        host = hosts.mba2022;
+        target = targets.mba2022;
       };
 
       # configs keyed with user names allow simply running `switch` to update
       # home manager configurations.
-      "Shawn.OHare" = mkHomeConfiguration rec {
+      "Shawn.OHare" = mkHomeConfiguration {
         inherit home-manager inputs;
-        host = hosts.work;
+        target = targets.work;
       };
     };
 

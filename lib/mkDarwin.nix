@@ -4,13 +4,13 @@
   inputs,
   darwin,
   home-manager,
-  host,
+  target,
   ...
 }:
 darwin.lib.darwinSystem rec {
-  system = host.system;
+  system = target.host.system;
   specialArgs = {
-    inherit inputs system host;
+    inherit inputs system target;
   };
 
   modules = [
@@ -20,29 +20,19 @@ darwin.lib.darwinSystem rec {
     # { nixpkgs.overlays = overlays; }
 
     # ../hardware/${name}.nix
-    ../system/${host.system}/configuration.nix
-    ../profiles/${host.profile}/configuration.nix
+    #
+    ../host/${target.host.config}
     home-manager.darwinModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
         extraSpecialArgs = {
-          inherit host;
+          inherit target;
         };
-        # FIXME: It seems having a system and standalone version of
-        # home-manager is incompatible?
-        # users."${host.username}" = import ../hm/common/home.nix;
+        # Do not use home-manager switch if including as a nix-darwin module.
+        users."${target.user.name}" = import ../home/${target.home.config};
       };
     }
-
-    # We expose some extra arguments so that our modules can parameterize
-    # better based on these values.
-    # {
-    #   config._module.args = {
-    #     currentSystemName = name;
-    #     currentSystem = system;
-    #   };
-    # }
   ];
 }

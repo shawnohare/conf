@@ -2,7 +2,7 @@
   pkgs,
   lib,
   config,
-  host,
+  target,
   ...
 }: let
   homebrew_prefix = "/opt/homebrew";
@@ -14,24 +14,32 @@ in {
     programs/git.nix
     programs/starship.nix
     # programs/exa.nix  # TODO: not maintained, remove when ready.
-    programs/eza.nix  # TODO: Might need newer hm version. eza not found.
+    programs/eza.nix # TODO: Might need newer hm version. eza not found.
     programs/zsh.nix
     programs/bash.nix
     programs/tmux.nix
   ];
 
   home = {
-    username = lib.mkDefault "${host.username}";
+    username = lib.mkDefault "${target.user.name}";
     homeDirectory = lib.mkDefault (
       if pkgs.stdenv.isDarwin
       then "/Users/${config.home.username}"
       else "/home/${config.home.username}"
     );
-    stateVersion = lib.mkDefault "${host.stateVersion}";
+    stateVersion = lib.mkDefault "${target.home.stateVersion}";
 
     # The home.packages option allows you to install Nix packages into your
-    # home environment. NOTE: do not add home-manager to home.packages or
+    # home environment.
+    # When using home-manager in nixOS or nix-darwin there does not seem to be
+    # a significant different between installing (user configured) packages and
+    # system packages. Thus currently we opt to install most tools via
+    # home-manager for an admin type user.
+    # NOTE: do not add home-manager to home.packages or
     # system packages to avoid collisions.
+    # NOTE: devbox can alternatively be used as a global / main package manager
+    # and comes with its own lockfile. Installing devbox also will install nix
+    # on macOS and non-NixOS systems.
     packages = with pkgs; [
       # # Adds the 'hello' command to your environment. It prints a friendly
       # # "Hello, world!" when run.
@@ -41,8 +49,8 @@ in {
       awscli2
       bash
       bandwhich
-      bat  # cat clone
-      bottom  # not top
+      bat # cat clone
+      bottom # not top
       cachix
       # coreutils-prefixed
       ctags
@@ -52,13 +60,13 @@ in {
       direnv
       du-dust # du + rust = dust
       # entr
-      # NOTE: eza seems to be added in 23.11?
-      # exa  # unmaintained!
-      eza  # maintained version of exa. Keep both in case of re-name.
+      eza # maintained version of exa.
       fd
       fastmod
+      gh  # github cli client
       git
       glow
+      helix # editor
       htop
       hyperfine # benchmarking
       jq
@@ -73,7 +81,7 @@ in {
       procs # ps replacement
       q-text-as-data
       ripgrep
-      rustup  # TODO: Manually install this toolchain?
+      rustup # TODO: Manually install this toolchain?
       shellcheck
       sd # simple sed
       starship

@@ -1,0 +1,85 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "hello@latest": {
+      "last_modified": "2023-11-17T14:14:56Z",
+      "resolved": "github:NixOS/nixpkgs/a71323f68d4377d12c04a5410e214495ec598d4c#hello",
+      "source": "devbox-search",
+      "version": "2.12.1",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/rvb0s7vzinanr88calnlibrvgsgly63b-hello-2.12.1"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/sgnd3fb22m769gqi577b6cdwwm5s76gk-hello-2.12.1"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/67bnnxkgnqcf3id74d4n8ijizxifcjvl-hello-2.12.1"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/sbldylj3clbkc0aqvjjzfa6slp4zdvlj-hello-2.12.1"
+        }
+      }
+    },
+    "micromamba@latest": {
+      "last_modified": "2023-10-25T20:49:13Z",
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#micromamba",
+      "source": "devbox-search",
+      "version": "1.4.4",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/9ypq9cza8vrgmya58a5wnhk2gzzzkwam-micromamba-1.4.4"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/adlnlagi793xvjff78nskmh42qwxvqyh-micromamba-1.4.4"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/61dq4q2xakhrgnp0rnm8l410iimnfi2j-micromamba-1.4.4"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/dr3wc8dpns12f3yhhj9y25bn7rr3q6ai-micromamba-1.4.4"
+        }
+      }
+    },
+    "neovim@0.9.4": {
+      "last_modified": "2023-11-17T14:14:56Z",
+      "resolved": "github:NixOS/nixpkgs/a71323f68d4377d12c04a5410e214495ec598d4c#neovim",
+      "source": "devbox-search",
+      "version": "0.9.4",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/0lhdgn7isfpv2ffp4q5mjslh0z2yhz0z-neovim-0.9.4"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/4myqdmj1pfx0wc30jv88062nriyd05fq-neovim-0.9.4"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/z0f1fg1k6v6npnpd8h5bc367l9y2mf59-neovim-0.9.4"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/x550cpl6f99r1cnd11jf9naah2jb3wwj-neovim-0.9.4"
+        }
+      }
+    },
+    "stack@latest": {
+      "last_modified": "2023-11-17T14:14:56Z",
+      "resolved": "github:NixOS/nixpkgs/a71323f68d4377d12c04a5410e214495ec598d4c#stack",
+      "source": "devbox-search",
+      "version": "2.13.1",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/d93rlv8k53iwd3sg9v616i0h0jk2mqsf-stack-2.13.1"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/iv093fp4g5iid517s8gl4c39y0ar2ykh-stack-2.13.1"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/klipwq32sz9wsa31w8qsbljd1alvgxqw-stack-2.13.1"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/lilvvsl450ln1hvzf4g7z4zswlpyng0w-stack-2.13.1"
+        }
+      }
+    }
+  }
+}

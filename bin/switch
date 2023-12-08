@@ -7,12 +7,11 @@ _STASH="${DIR}/lib/stash/bin/stash"
 # Check if we are on macos.
 if [ "$(uname -s)" = "Darwin" ]; then
     REBUILD_CMD="darwin-rebuild"
-    APP_CONFIG="${HOME}/Library/Application Support"
+    # APP_CONFIG="${HOME}/Library/Application Support"
     FIREFOX_PROFILES_DIR="${HOME}/Library/Application Support/Firefox/Profiles"
     LIBREWOLF_PROFILES_DIR="${HOME}/Library/Application Support/librewolf/Profiles"
 else
     REBUILD_CMD="nixos-rebuild"
-    APP_CONFIG="${HOME}/Library/Application Support"
     FIREFOX_PROFILES_DIR="${HOME}/.mozilla/firefox"
     LIBREWOLF_PROFILES_DIR="${HOME}/.librewolf"
 fi
@@ -23,11 +22,13 @@ Usage:
     switch home [attribute]
     switch system [attribute]
     switch ln [options]
+    switch update <package>
 
 Commands:
-    home   - Use home-manager and stash to update user configuration.
+    home   - Use (standalone) home-manager and stash to update user configuration.
     system - Update system settings in nixos or nix-darwin.
     ln     - Link configuration files not handled by home-manager.
+    update - Update the flake lockfile's entry for the input package.
 
 Options:
     -h|--help          Display this this usage message.
@@ -36,6 +37,11 @@ EOF
 
 usage_home() {
     cat <<EOF
+Description:
+    Manage a system via a standalone home-manager installation.
+    Do not use with a system configuration that includes home-manager as a
+    module.
+
 Usage:
     switch home [attribute]
 
@@ -80,6 +86,20 @@ EOF
     "${_STASH}" --help
 }
 
+usage_update() {
+    cat <<EOF
+Usage:
+    switch update <package>
+
+Description:
+    Update nixpkgs and the flake lockfile entry for the input package.
+
+Options:
+    -h|--help          Display this this usage message.
+
+EOF
+}
+
 
 _nix_build() {
     echo "switch: Building flake $1"
@@ -98,25 +118,6 @@ _switch() {
     "$1" --show-trace --verbose switch --flake "${attr}"
 }
 
-switch_system() {
-    # rebuild the system configuration.
-    target="$1"
-    if [ "$(uname -s)" = "Darwin" ]; then
-        cmd="darwin-rebuild"
-        if ! command -v "${cmd}" 1> /dev/null; then
-            cd "${DIR}" || exit 1
-            echo "switch: Did not detect darwin-rebuild command."
-            _nix_build "darwinConfigurations.${target}.system"
-            cmd="${DIR}/result/sw/bin/darwin-rebuild"
-        fi
-    else
-        cmd="nixos-rebuild"
-    fi
-
-    _switch "${cmd}" "${target}"
-    return 0
-}
-
 switch_ln() {
     # Define which files get linked here.
     "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
@@ -124,6 +125,33 @@ switch_ln() {
     "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${FIREFOX_PROFILES_DIR}"/*default-release -maxdepth 0 -type d)/chrome"
     "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${LIBREWOLF_PROFILES_DIR}"/*default-default -maxdepth 0 -type d)/chrome"
 }
+
+_darwin_init() {
+    # TODO: backup files in /etc
+    sudo mv /etc/shells /etc/shells.before-nix-darwin
+    sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
+    sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+    sudo mv /etc/zprofile /etc/zprofile.before-nix-darwin
+    retrun 0
+}
+
+switch_system() {
+    # rebuild the system configuration.
+    target="$1"
+    cmd="${REBUILD_CMD}"
+    # The rebuild command always exists on nixOS.
+    if ! command -v "${REBUILD_CMD}" 1> /dev/null; then
+        cd "${DIR}" || exit 1
+        echo "switch: Did not detect darwin-rebuild command."
+        _nix_build "darwinConfigurations.${target}.system"
+        cmd="${DIR}/result/sw/bin/darwin-rebuild"
+    fi
+    _switch "${cmd}" "${target}"
+    switch_ln --force
+    return 0
+}
+
+
 
 switch_home() {
     # rebuild the home-manager configuration
@@ -147,11 +175,16 @@ switch_home() {
     return 0
 }
 
+switch_update() {
+    # Update nixpkgs and the input package
+    nix flake lock --update-input nixpkgs --update-input "$1"
+}
+
 
 
 # Parse subcommands.
 case "$1" in
-    system|home|ln)
+    system|home|ln|update)
         cmd="$1"
         shift
         ;;

@@ -7,7 +7,7 @@
   inputs,
   pkgs,
   home-manager,
-  host,
+  target,
   ...
 }: {
   imports = [
@@ -30,67 +30,21 @@
 
     # TODO: Consider moving most of these to home-manager.
     systemPackages = with pkgs; [
-      alejandra
-      awscli2
-      bash
-      bandwhich
-      bat  # cat clone
-      bottom  # not top
-      cachix
-      # coreutils-prefixed
-      ctags
-      curl
-      delta # diff
-      devbox
-      direnv
-      du-dust # du + rust = dust
-      # entr
-      exa  # unmaintained!
-      # eza  # maintained version of exa. Keep both in case of re-name.
-      fd
-      fastmod
-      git
-      glow
-      htop
-      hyperfine # benchmarking
-      jq
-      miller
-      moreutils
-      mosh
-      # micromamba
-      # neovim  # NOTE: We like to use newer versions.
-      ncurses
-      nushell
-      pandoc
-      procs # ps replacement
-      q-text-as-data
-      ripgrep
-      rustup  # TODO: Manually install this toolchain?
-      shellcheck
-      sd # simple sed
-      starship
-      tealdeer
-      tectonic
-      tmux
-      tokei
-      uutils-coreutils
-      wget
-      zoxide # like z
-      zsh
     ];
   };
 
-  fonts = {
-    # Fonts
-    fontDir.enable = true;
-    fonts = [
-      (pkgs.nerdfonts.override {
-        fonts = [
-          "JetBrainsMono"
-        ];
-      })
-    ];
-  };
+  # Fonts can also be installed by home-manager.
+  # fonts = {
+  #   # Fonts
+  #   fontDir.enable = true;
+  #   fonts = [
+  #     (pkgs.nerdfonts.override {
+  #       fonts = [
+  #         "JetBrainsMono"
+  #       ];
+  #     })
+  #   ];
+  # };
 
   # does not appear to be included in nix-darwin
   # i18n.defaultLocale = "en_US.UTF-8";
@@ -100,6 +54,11 @@
     configureBuildUsers = true;
     nrBuildUsers = 32;
     package = pkgs.nixUnstable;
+    gc = {
+      automatic = true;
+      interval.Day = 7; #Hours, minutes
+      options = "--delete-older-than 7d";
+    };
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -134,13 +93,13 @@
   users = {
     nix = {
     };
-    users."${host.username}" = {
+    users."${target.user.name}" = {
       # isNormalUser = true;
-      name = "${host.username}";
+      name = "${target.user.name}";
       home = lib.mkDefault (
         if pkgs.stdenv.isDarwin
-        then "/Users/${host.username}"
-        else "/home/${host.username}"
+        then "/Users/${target.user.name}"
+        else "/home/${target.user.name}"
       );
       shell = pkgs.zsh;
     };

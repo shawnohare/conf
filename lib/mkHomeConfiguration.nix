@@ -5,15 +5,13 @@
 {
   inputs,
   home-manager,
-  host,
+  target,
   ...
 }:
 home-manager.lib.homeManagerConfiguration rec {
-  pkgs = host.nixpkgs.legacyPackages.${host.system};
-  extraSpecialArgs = {inherit inputs host;};
-  modules =
-    [
-      ../hm/home.nix
-    ]
-    ++ host.hm_modules;
+  pkgs = target.home.nixpkgs.legacyPackages.${target.host.system};
+  extraSpecialArgs = {inherit inputs target;};
+  modules = [
+    ../home/${target.home.config}
+  ];
 }
