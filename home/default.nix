@@ -56,8 +56,8 @@ in {
       ctags
       curl
       delta # diff
-      devbox
-      direnv
+      devbox # global and per project dep manager.
+      direnv #
       du-dust # du + rust = dust
       # entr
       eza # maintained version of exa.
@@ -70,6 +70,7 @@ in {
       htop
       hyperfine # benchmarking
       jq
+      lazygit
       miller
       moreutils
       mosh
@@ -92,6 +93,7 @@ in {
       uutils-coreutils
       wget
       zoxide # like z
+      zellij # terminal multiplexer
       zsh
 
       # # It is sometimes useful to fine-tune packages, for example, by applying
