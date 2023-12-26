@@ -1,9 +1,9 @@
 {
   "packages": [
-    "neovim@0.9.4",
     "micromamba@latest",
     "stack@latest",
-    "hello@latest"
+    "hello@latest",
+    "nodejs@latest"
   ],
   "shell": {
     "init_hook": [

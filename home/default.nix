@@ -63,6 +63,7 @@ in {
       eza # maintained version of exa.
       fd
       fastmod
+      # gcc
       gh  # github cli client
       git
       glow
@@ -74,15 +75,15 @@ in {
       miller
       moreutils
       mosh
-      # micromamba
-      # neovim  # NOTE: We like to use newer versions.
+      # micromamba # NOTE: Had issues, but devbox version seems fine.
+      # neovim  # NOTE: Managed through devbox.
       ncurses
       nushell
       pandoc
       procs # ps replacement
       q-text-as-data
       ripgrep
-      rustup # TODO: Manually install this toolchain?
+      # rustup # NOTE: Seems to cause issues, such as mixing libs. Checkout fenix?
       shellcheck
       sd # simple sed
       starship
@@ -129,7 +130,7 @@ in {
         recursive = true;
         source = ./bin;
       };
-      ".local/bin/switch".source = ../bin/switch;
+      ".local/bin/switch".source = ../switch;
 
       # # You can also set the file content immediately.
       # ".gradle/gradle.properties".text = ''

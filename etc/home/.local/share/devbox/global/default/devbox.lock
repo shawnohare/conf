@@ -41,23 +41,23 @@
         }
       }
     },
-    "neovim@0.9.4": {
-      "last_modified": "2023-11-17T14:14:56Z",
-      "resolved": "github:NixOS/nixpkgs/a71323f68d4377d12c04a5410e214495ec598d4c#neovim",
+    "nodejs@latest": {
+      "last_modified": "2023-12-18T02:58:18Z",
+      "resolved": "github:NixOS/nixpkgs/ca16221251951e9c6261a1a2bb4f9389038d3632#nodejs_21",
       "source": "devbox-search",
-      "version": "0.9.4",
+      "version": "21.4.0",
       "systems": {
         "aarch64-darwin": {
-          "store_path": "/nix/store/0lhdgn7isfpv2ffp4q5mjslh0z2yhz0z-neovim-0.9.4"
+          "store_path": "/nix/store/m9dw902f3qmlyd1k79fnkpdpbbgmiq5p-nodejs-21.4.0"
         },
         "aarch64-linux": {
-          "store_path": "/nix/store/4myqdmj1pfx0wc30jv88062nriyd05fq-neovim-0.9.4"
+          "store_path": "/nix/store/jcyq7h968yazllrvf432lrx5qfibdr66-nodejs-21.4.0"
         },
         "x86_64-darwin": {
-          "store_path": "/nix/store/z0f1fg1k6v6npnpd8h5bc367l9y2mf59-neovim-0.9.4"
+          "store_path": "/nix/store/wri9fd1rhd708z3k48vp60kx39l8nl04-nodejs-21.4.0"
         },
         "x86_64-linux": {
-          "store_path": "/nix/store/x550cpl6f99r1cnd11jf9naah2jb3wwj-neovim-0.9.4"
+          "store_path": "/nix/store/p3mbsd6dn6qxy7s7svmahb99m95cwk39-nodejs-21.4.0"
         }
       }
     },

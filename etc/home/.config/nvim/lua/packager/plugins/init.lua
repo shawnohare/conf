@@ -1,8 +1,11 @@
 return {
-    { "github/copilot.vim", enabled = false },
+    {
+        "github/copilot.vim",
+        enabled = false,
+    },
     {
         "zbirenbaum/copilot.lua",
-        enabled = true,
+        enabled = false,
         lazy = false,
         -- opts for use with copilot-cmp
         opts = {
@@ -21,21 +24,9 @@ return {
     {
         "L3MON4D3/LuaSnip",
         -- follow latest release.
-        version = "<CurrentMajor>.*",
+        version = "v2.*",
         -- install jsregexp (optional!).
         -- build = "make install_jsregexp"
-    },
-    {
-        'Exafunction/codeium.vim',
-        lazy = true,
-        config = function()
-            -- Change '<C-g>' here to any keycode you like.
-            -- vim.keymap.set('i', '<Tab>', function() return vim.fn['codeium#Accept']() end, { expr = true })
-            vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true })
-            vim.keymap.set('i', '<M-]>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true })
-            vim.keymap.set('i', '<M-[>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true })
-            vim.keymap.set('i', '<M-x>', function() return vim.fn['codeium#Clear']() end, { expr = true })
-        end
     },
     { "numToStr/Comment.nvim", opts = {} },
     {

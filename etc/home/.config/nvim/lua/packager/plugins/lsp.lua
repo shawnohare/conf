@@ -35,30 +35,27 @@ return {
 
         mason_lspconfig.setup({
             ensure_installed = {
-                -- "eslint-lsp",
-                "rome",          -- mostly js/ts, but also json, md, etc.
+                "biome",  -- js, json
                 "bashls",
-                    "fennel_language_server",
-                    "html",
-                    "jsonls",
-                    "lua_ls",
-                    "pyright",
-                    "ruff_lsp",
-                    "marksman",
-                    "prosemd_lsp",
-                    "nil_ls",       -- nix, TODO: need config?
-                    "teal_ls",
-                    "taplo",        -- toml
-                    "terraformls",
-                    "tflint",
-                    "lemminx",      -- xml
-                    "yamlls",
-
-                    -- "yaml-language-server",
-                    -- "yamllint",
-                    -- "pyright",
-                    -- "pylint",
-                }
+                -- "fennel_language_server",
+                "html",
+                "lua_ls",
+                "pyright",
+                "ruff_lsp",
+                "marksman",
+                "prosemd_lsp",
+                -- "nil_ls",       -- nix, TODO: cannot compile in some cases?
+                -- "teal_ls",   -- TODO: luarocks issue
+                "taplo",        -- toml
+                "terraformls",
+                "tflint",
+                "lemminx",      -- xml
+                "yamlls",
+                -- "yaml-language-server",
+                -- "yamllint",
+                -- "pyright",
+                -- "pylint",
+              }
             })
 
             mason_lspconfig.setup_handlers({

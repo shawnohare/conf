@@ -5,7 +5,13 @@ return {
     config = function()
         require("nvim-treesitter.configs").setup {
             auto_install = true,
-            ensure_installed = "all", -- one of "all", "language", or a list of languages
+            -- ensure_installed = "all", -- one of "all", "language", or a list of languages
+            ensure_installed = {
+                "lua",
+                "vim",
+                "vimdoc",
+                "python",
+            }, -- one of "all", "language", or a list of languages
             highlight = {
                 enable = true,
                 -- additional_vim_regex_highlighting = {'org'},
