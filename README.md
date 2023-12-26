@@ -139,6 +139,7 @@ sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 sudo mv /etc/shells /etc/shells.before-nix-darwin
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
 ```
 
 ### nix-darwin rebuilding

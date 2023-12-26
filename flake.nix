@@ -127,6 +127,7 @@
 
       mbp2016 = {
         user.name = "shawn";
+        description = "MacBook Pro 2016";
         host = macos.intel.host;
         home = macos.intel.home;
         overlays = 0;
@@ -134,6 +135,7 @@
 
       mba2022 = {
         user.name = "shawn";
+        description = "MacBook Air 2022";
         host = macos.arm.host;
         home = macos.arm.home;
         overlays = 0;

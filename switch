@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+# ----------------------------------------------------------------------------
+# Switch nix configurations using nixos-rebuild, darwin-rebuild or
+# home-manager (for standalone settings).
+# ----------------------------------------------------------------------------
+
 # Set global vars used in this script.
 DIR="${HOME}/conf"
 _STASH="${DIR}/lib/stash/bin/stash"
@@ -100,50 +105,84 @@ Options:
 EOF
 }
 
-
 _nix_build() {
-    echo "switch: Building flake $1"
+    # Build nix-darwin or home-manager (standalone) for first time.
+    echo "switch: Building initial flake attribute with nix build ${DIR}/#$1"
     nix --verbose --show-trace --extra-experimental-features "nix-command flakes" build "${DIR}/#$1"
 }
 
+_nix_darwin_backup() {
+    # Sometimes nix-darwin sees unrecognized files in /etc and aborts, e.g.,
+    # after some system updates.
+    echo "switch: Backing up files in /etc."
+    sudo mv /etc/shells /etc/shells.before-nix-darwin
+    sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
+    sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+    sudo mv /etc/zprofile /etc/zprofile.before-nix-darwin
+    sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
+}
+
+_build_nix_darwin() {
+    # Build nix-darwin for first time.
+    if [ -z "$1" ]; then
+        echo "switch: No host specified to initialize nix-darwin."
+    fi
+    echo "switch: Did not detect darwin-rebuild command."
+    _nix_darwin_backup
+    _nix_build "darwinConfigurations.$1.system"
+    retrun 0
+}
+
+_build_home_manager() {
+    # Build home-manager for the first time.
+    if [ -z "$1" ]; then
+        echo "switch: No home-manager target specified."
+        exit 1
+    fi
+    echo "switch: Did not detect home-manager command."
+    echo "switch: Building home manager configuration for $1."
+    _nix_build "homeConfigurations.$1.activationPackage"
+    ./result/activate
+    echo "switch: Restart shell to ensure changes."
+}
+
 _switch() {
+    # Wrapper around nixos-rebuild|darwin-rebuild|home-manager switch command
     # usage: _switch cmd [attr]
-    # Wrapper for nixos-rebuild, darwin-rebuild, and home-manager which all
-    # expose the "switch" subcommand.
+    if [ -z "$1" ]; then
+        echo "switch: rebuild command not specified."
+        exit 1
+    fi
     if [ -z "$2" ]; then
         attr="$DIR"
     else
         attr="$DIR/#$2"
     fi
+    echo "switch: Switching configuration using $1 switch --flake ${attr}"
     "$1" --show-trace --verbose switch --flake "${attr}"
 }
 
 switch_ln() {
     # Define which files get linked here.
     "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
-    # Link custom firefox CSS files.
-    "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${FIREFOX_PROFILES_DIR}"/*default-release -maxdepth 0 -type d)/chrome"
-    "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${LIBREWOLF_PROFILES_DIR}"/*default-default -maxdepth 0 -type d)/chrome"
+    # Link custom firefox CSS files. The profile name is dynamic.
+    if [ -d "${FIREFOX_PROFILES_DIR}" ]; then
+        "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${FIREFOX_PROFILES_DIR}"/*default* -maxdepth 0 -type d)/chrome"
+    fi
+    if [ -d "${LIBREWOLF_PROFILES_DIR}" ]; then
+        "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${LIBREWOLF_PROFILES_DIR}"/*default-default -maxdepth 0 -type d)/chrome"
+    fi
 }
 
-_darwin_init() {
-    # TODO: backup files in /etc
-    sudo mv /etc/shells /etc/shells.before-nix-darwin
-    sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
-    sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
-    sudo mv /etc/zprofile /etc/zprofile.before-nix-darwin
-    retrun 0
-}
 
 switch_system() {
     # rebuild the system configuration.
-    target="$1"
+    # target defaults to compute name
+    target="${1:-$(hostname -s)}"
     cmd="${REBUILD_CMD}"
     # The rebuild command always exists on nixOS.
     if ! command -v "${REBUILD_CMD}" 1> /dev/null; then
-        cd "${DIR}" || exit 1
-        echo "switch: Did not detect darwin-rebuild command."
-        _nix_build "darwinConfigurations.${target}.system"
+        _build_nix_darwin "${target}"
         cmd="${DIR}/result/sw/bin/darwin-rebuild"
     fi
     _switch "${cmd}" "${target}"
@@ -152,20 +191,11 @@ switch_system() {
 }
 
 
-
 switch_home() {
-    # rebuild the home-manager configuration
-    target="$1"
-    if [ -z "${target}" ]; then
-        target="$(whoami)"
-    fi
-
+    # rebuild the (standalone) home-manager configuration
+    target="${1:-$(whoami)}"
     if ! command -v "home-manager" 1> /dev/null; then
-        cd "${DIR}" || exit 1
-        echo "switch: Building home manager configuration."
-        _nix_build "homeConfigurations.${target}.activationPackage"
-        ./result/activate
-        echo "switch: Restart shell to ensure changes."
+        _build_home_manager "${target}"
     else
         _switch "home-manager" "${target}"
     fi
@@ -188,9 +218,16 @@ case "$1" in
         cmd="$1"
         shift
         ;;
-    *)
+    backup)
+        _nix_darwin_backup
+        exit
+        ;;
+    --help|-h)
         usage
         exit
+        ;;
+    *)
+        cmd="system"
         ;;
 esac
 
@@ -204,5 +241,3 @@ case "$1" in
         exit
         ;;
 esac
-
-
