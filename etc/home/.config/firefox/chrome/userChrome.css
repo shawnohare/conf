@@ -9,5 +9,9 @@
 
 /* hides the native tabs */
 #TabsToolbar {
-  visibility: collapse;
+  visibility: collapse !important;
+}
+
+#TabsToolbar-customization-target {
+  visibility: collapse !important;
 }

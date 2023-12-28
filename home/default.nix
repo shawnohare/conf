@@ -40,80 +40,89 @@ in {
     # NOTE: devbox can alternatively be used as a global / main package manager
     # and comes with its own lockfile. Installing devbox also will install nix
     # on macOS and non-NixOS systems.
-    packages = with pkgs; [
-      # # Adds the 'hello' command to your environment. It prints a friendly
-      # # "Hello, world!" when run.
-      hello
+    packages = with pkgs;
+      [
+        # # Adds the 'hello' command to your environment. It prints a friendly
+        # # "Hello, world!" when run.
+        hello
 
-      alejandra
-      awscli2
-      bash
-      bandwhich
-      bat # cat clone
-      bottom # not top
-      cachix
-      # coreutils-prefixed
-      ctags
-      curl
-      delta # diff
-      devbox # global and per project dep manager.
-      direnv #
-      du-dust # du + rust = dust
-      # entr
-      eza # maintained version of exa.
-      fd
-      fastmod
-      # gcc
-      gh  # github cli client
-      git
-      glow
-      helix # editor
-      htop
-      hyperfine # benchmarking
-      jq
-      lazygit
-      miller
-      moreutils
-      mosh
-      # micromamba # NOTE: Had issues, but devbox version seems fine.
-      # neovim  # NOTE: Managed through devbox.
-      ncurses
-      nushell
-      pandoc
-      procs # ps replacement
-      q-text-as-data
-      ripgrep
-      # rustup # NOTE: Seems to cause issues, such as mixing libs. Checkout fenix?
-      shellcheck
-      sd # simple sed
-      starship
-      tealdeer
-      tectonic
-      tmux
-      tokei
-      uutils-coreutils
-      wget
-      zoxide # like z
-      zellij # terminal multiplexer
-      zsh
+        alejandra
+        awscli2
+        bash
+        bandwhich
+        bat # cat clone
+        bottom # not top
+        cachix
+        # coreutils-prefixed
+        ctags
+        curl
+        delta # diff
+        devbox # global and per project dep manager.
+        direnv #
+        du-dust # du + rust = dust
+        # entr
+        eza # maintained version of exa.
+        fd
+        fastmod
+        # gcc
+        gh # github cli client
+        git
+        glow
+        helix # editor
+        htop
+        hyperfine # benchmarking
+        jq
+        lazygit
+        miller
+        moreutils
+        mosh
+        # micromamba # NOTE: Had issues, but devbox version seems fine.
+        # neovim  # NOTE: Managed through devbox.
+        ncurses
+        nushell
+        pandoc
+        procs # ps replacement
+        q-text-as-data
+        ripgrep
+        # rustup # NOTE: Seems to cause issues, such as mixing libs. Checkout fenix?
+        shellcheck
+        sd # simple sed
+        starship
+        tealdeer
+        tectonic
+        tmux
+        tokei
+        uutils-coreutils
+        wget
+        zoxide # like z
+        zellij # terminal multiplexer
+        zsh
 
-      # # It is sometimes useful to fine-tune packages, for example, by applying
-      # # overrides. You can do that directly here, just don't forget the
-      # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-      # # fonts?
-      (nerdfonts.override {
-        fonts = [
-          "JetBrainsMono"
-        ];
-      })
+        # # It is sometimes useful to fine-tune packages, for example, by applying
+        # # overrides. You can do that directly here, just don't forget the
+        # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
+        # # fonts?
+        (nerdfonts.override {
+          fonts = [
+            "JetBrainsMono"
+          ];
+        })
 
-      # # You can also create simple shell scripts directly inside your
-      # # configuration. For example, this adds a command 'my-hello' to your
-      # # environment:
-      # (pkgs.writeShellScriptBin "my-hello" ''
-      #   echo "Hello, ${config.home.username}!"
-      # '')
-    ];
+        # # You can also create simple shell scripts directly inside your
+        # # configuration. For example, this adds a command 'my-hello' to your
+        # # environment:
+        # (pkgs.writeShellScriptBin "my-hello" ''
+        #   echo "Hello, ${config.home.username}!"
+        # '')
+      ]
+      # On macOS, a nix provided clang will fail to link many Apple SDK
+      # components. This can cause build issues, e.g., when using cargo.
+      # One approach is to export PATH=/usr/bin:$PATH when building when cargo
+      ++ (
+        if pkgs.stdenv.isDarwin
+        then (builtins.attrValues darwin.apple_sdk.frameworks)
+        else []
+      );
 
     # Home Manager can symlink config files. The primary way to manage
     # plain files is through 'home.file'.

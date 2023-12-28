@@ -1,4 +1,4 @@
-# Config (nixos, nix-darwin, home-manager, devbox)
+# configuration using nixos, nix-darwin, home-manager, devbox
 
 ## Introduction
 
@@ -11,41 +11,114 @@ For this reason we purposefully avoid some of the more layered frameworks (and
 their utility libraries) mentioned in the [References](#References) below, but
 try to take some structural cues.
 
-The primary management options are
 
-1. NixOS: include home-manager as a module.
-1. macOS: Use nix-darwin on macOS and include home-manager as a module. We have
-   run into some issues with nix-darwin after system updates.
-1. Linux / macOS: Use home-manager in a standalone fashion, but configured within the
-   flake. This is the only option for non-NixOS Linux distributions.
+## Setup
 
-## Package management
+###  Install nix
 
-The tools we use generally fall into the following categories.
+Except on NixOS, we must install nix (the package manager) itself to build the flake.
 
-1. Common, relatively static utilities we rarely update. These can be
-   effectively managed by a stable release of nixpkgs, or the system
-   package manager.
-2. Applications and toolchains we wish to update frequently (e.g., neovim).
-3. Applications not available to nixpkgs.
+#### DeterminateSystems installer (preferred)
 
-When using a stable version of `nixpkgs`, there does not seem to be an elegant
-way of frequently updating individual packages.
-
-In our setup we prefer to follow nixpkgs-unstable and install most packages
-with either `home-manager` or `devbox global`.
-
-Update a specific flake input
+Note that this installer will not result in an identical setup as the official
+installer. In particular, some default channels are not necessarily set. This
+can make uninstalling nix-darwin a pain.
+Confer https://github.com/DeterminateSystems/nix-installer for nuances.
 
 ```bash
-nix flake lock --update-input nixpkgs --update-input <package>`
-```
-or equivalently
-```bash
-bin/switch update <package>
+if [ "$(uname -s)" = "Darwin" ]; then
+    xcode-select --install
+fi
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
 
-## Structure
+#### Official installer
+
+```bash
+if [ "$(uname -s)" = "Darwin" ]; then
+    xcode-select --install
+fi
+sh <(curl -L https://nixos.org/nix/install) --daemon
+```
+
+### macOS
+
+macOS systems can managed with a combination of nix-darwin and home-manager.
+nix-darwin surfaces a NixOS like system configuration at the system level. The
+basic options are
+
+1. Build nix-darwin and include home-manager as a nix-darwin module. In theory this
+   option is preferred, but we have run into some stability issues
+1. Build a stand-alone home-manager.
+
+#### Install nix-darwin
+
+We install nix-darwin by building this flake for a specific host (e.g., "work")
+corresponds to one the `darwinConfigurations` attributes in
+[flake.nix](./flake.nix).
+
+Clone and build the flake for a specified target, e.g.,
+
+```bash
+git clone https://github.com/shawnohare/conf
+cd conf
+host=work # defaults to $(hostname -s) if omitted
+./switch "${host}"
+# or
+nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
+result/sw/bin/darwin-rebuild switch --flake ".#${host}"
+```
+
+#### nix-darwin rebuilding
+
+After nix-darwin is built, `darwin-rebuild` is available. Rebuild the system
+and user configuration via
+
+```bash
+./switch "${host}"
+# or
+darwin-rebuild switch --flake "#${host}"
+```
+
+#### Troubleshooting nix-darwin
+
+After initially installing nix or macOS updates `nix-darwin switch` can fail
+for a variety of reasons.
+
+
+nix-darwin might fail if it cannot find `/run`. Try
+
+```bash
+printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
+/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+```
+
+nix-darwin might fail to write certain files if they already exist. Try
+```bash
+./switch backup
+# or
+sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+sudo mv /etc/shells /etc/shells.before-nix-darwin
+sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
+sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
+```
+
+
+## home-manager
+
+`home-manager` deals with user-level configuration. For macOS and non-NixOS Linux
+systems it is possible to install home-manager in standalone mode. To do this,
+simply omit the system building steps outlined above.
+
+```bash
+nix build --extra-experimental-features "nix-command flakes" ".#homeConfigurations.${host}.activationPackage"
+./result/activate
+# or
+./switch home ${host}
+```
+
+## Repo Structure
 
 - [host](./host): Contains system specific configurations.
    In theory these configurations are at the highest level,
@@ -65,105 +138,44 @@ bin/switch update <package>
 - [etc](./etc): Configurations not managed by home-manager, but
   via a symlink farm manager.
 
-## Install nix
 
-On platforms other than NixOS, we must first install nix itself in order to
-build the flake.
+## Package management
 
-```bash
-if [ "$(uname -s)" = "Darwin" ]; then
-    xcode-select --install
-fi
-sh <(curl -L https://nixos.org/nix/install) --daemon
-```
-or using the DeterminateSystems installer from
-https://github.com/DeterminateSystems/nix-installer.
-Note that this installer will not result in an identical setup as the official
-installer. In particular, some default channels are not necessarily set. This
-has made uninstalling nix-darwin a pain.
+The primary management options are
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-```
-or, to via devbox
+1. NixOS: include home-manager as a module.
+1. macOS: Use nix-darwin on macOS and include home-manager as a module. This
+   is generally our preferred method on macOS, though it does mean switching
+   user configurations entails a system switch and sudo password.
+1. Linux / macOS: Use home-manager in a standalone fashion, but configured
+   within the flake. This is the only option for non-NixOS Linux distributions.
 
-```bash
-curl -fsSL https://get.jetpack.io/devbox | bash
-```
 
-## macOS
+The tools we use generally fall into the following categories.
 
-macOS systems can managed with a combination of nix-darwin and home-manager.
-nix-darwin surfaces a NixOS like system configuration at the system level. The
-basic options are
+1. Common, relatively static utilities we rarely update. These can be
+   effectively managed by a stable release of nixpkgs, or the system
+   package manager.
+2. Applications and toolchains we wish to update frequently (e.g., neovim).
+3. Applications not available to nixpkgs or more easily installed manually,
+   e.g., many macOS GUI applications.
 
-1. Build nix-darwin and include home-manager as a nix-darwin module. In theory this
-   option is preferred, but we have run into some stability issues
-1. Build a stand-alone home-manager.
+When using a stable version of `nixpkgs`, there does not seem to be an elegant
+way of frequently updating individual packages.
 
-### nix-darwin
+In our setup we prefer to follow nixpkgs-unstable and install most packages
+with either `home-manager` or `devbox global`.
 
-We install nix-darwin by building this flake for a specific host. For
-example, `host ∈ {work, macbook, intel, ...}` and should correspond to one of
-`darwinConfigurations` in [flake.nix](./flake.nix).
-WARNING: We have runRiIto some NG:bi ity issues when e tempthng ta use vix-darwin. Presentlye runito some biity issues when temptng t use ix-darwin. Presently
-Below are some possible steps to perform after installing nix but
-before switching the configuration with nix-darwin.
+### Updating flake inputs
 
-Clone and build the flake for a specified target, e.g
+It is a good idea to periodically update the flake's lockfile.
+
+To update a specific flake input (e.g., nixpkgs in the example)
 
 ```bash
-git clone https://github.com/shawnohare/conf
-cd conf
-nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
-result/sw/bin/darwin-rebuild switch --flake ".#${host}"
-```
-mbp2022mbp2022
-Alternatively
-```bash
-bin/switch --system ${host}
-# for example
-bin/switch --system work
-```
-
-nix-darwin might fail if it cannot find `/run`. Try
-
-```bash
-printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
-/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
-```
-
-nix-darwin might fail to write certain files if they already exist. Try
-```bash
-sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
-sudo mv /etc/shells /etc/shells.before-nix-darwin
-sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
-sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
-sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
-```
-
-### nix-darwin rebuilding
-
-After the flake is built, `darwin-rebuild` is available. Rebuild the
-configuration via
-
-```bash
-darwin-rebuild switch --flake "#${host}"
-# or
-bin/switch system ${host}
-```
-
-## home-manager
-
-`home-manager` deals with user-level configuration. For macOS and non-NixOS Linux
-systems it is possible to install home-manager in standalone mode. To do this,
-simply omit the system building steps outlined above.
-
-```bash
-nix build --extra-experimental-features "nix-command flakes" ".#homeConfigurations.${host}.activationPackage"
-./result/activate
-# or
-bin/switch home ${host}
+nix flake update nixpkgs
+# previously
+nix flake lock --update-input nixpkgs --update-input <package>`
 ```
 
 ## Management of config files
@@ -186,21 +198,26 @@ symlinking capabilities does involve a rebuild after any configuration change.
 This is because the source file in the repository gets copied to the nix store
 and then linked. For rapid configuration changes this is a bit of a pain.
 
+## macOS Applications
 
-# References
+Some applications we like to use while on macOS that are generally not managed
+by this repo are
+
+- 1password
+- Raycast (spotlight replacement)
+- raindrop.io (bookmark manager)
+- obsidian.md (notes)
+- Orion & firefox (web browser)
+
+
+## References
 
 - This flake was initially a near clone of
   [Matthias' NixOS & macOS configuration flake][matthias_nixos_config]
-- The [digga][digga] project also provides a flake template and lib for
-  highly structured and modularized configs.
 - [Mitchell Hashimoto's nixos config][mitchellh_nixos_config]
 - [flake-utils-plus][flake-utils-plus]
 
 
-
-
-
-[digga]: https://github.com/divnix/digga
 [matthias_nixos_config]: <https://github.com/MatthiasBenaets/nixos-config>
 [mitchellh_nixos_config]: <https://github.com/mitchellh/nixos-config>
 [flake-utils-plus]: <https://github.com/gytis-ivaskevicius/flake-utils-plus>

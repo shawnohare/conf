@@ -115,11 +115,11 @@ _nix_darwin_backup() {
     # Sometimes nix-darwin sees unrecognized files in /etc and aborts, e.g.,
     # after some system updates.
     echo "switch: Backing up files in /etc."
-    sudo mv /etc/shells /etc/shells.before-nix-darwin
-    sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
-    sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
-    sudo mv /etc/zprofile /etc/zprofile.before-nix-darwin
-    sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
+    sudo mv -v /etc/shells /etc/shells.before-nix-darwin
+    sudo mv -v /etc/bashrc /etc/bashrc.before-nix-darwin
+    sudo mv -v /etc/zshrc /etc/zshrc.before-nix-darwin
+    sudo mv -v /etc/zprofile /etc/zprofile.before-nix-darwin
+    sudo mv -v /etc/zshenv /etc/zshenv.before-nix-darwin
 }
 
 _build_nix_darwin() {
