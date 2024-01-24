@@ -91,8 +91,8 @@
 
     historySubstringSearch = {
       enable = true;
-      searchUpKey = ["^K" "^P"];
-      searchDownKey = "^N";
+      searchUpKey = ["^[[A" "^K" "^P"];
+      searchDownKey = ["^[[B" "^N"];
     };
 
     # Extras to add to .zshenv

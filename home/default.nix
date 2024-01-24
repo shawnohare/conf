@@ -120,7 +120,10 @@ in {
       # One approach is to export PATH=/usr/bin:$PATH when building when cargo
       ++ (
         if pkgs.stdenv.isDarwin
-        then (builtins.attrValues darwin.apple_sdk.frameworks)
+        # NOTE: We did encounter an issue with the QuickTime framework being
+        # unavailable.
+        # then (builtins.attrValues darwin.apple_sdk.frameworks)
+        then with darwin.apple_sdk.frameworks; [IOKit]
         else []
       );
 
