@@ -44,6 +44,7 @@ in {
       [
         # # Adds the 'hello' command to your environment. It prints a friendly
         # # "Hello, world!" when run.
+        _1password
         hello
 
         alejandra
@@ -54,6 +55,7 @@ in {
         bottom # not top
         cachix
         # coreutils-prefixed
+        carapace # cross-shell completions
         ctags
         curl
         delta # diff
@@ -212,7 +214,9 @@ in {
   # Defaults to simply enable without much configuration.
   # More detailed configurations live in ./programs
   programs = {
+    awscli.enable = true;
     bottom.enable = true;
+    carapace.enable = true;
     dircolors.enable = true;
     home-manager.enable = true;
     htop.enable = true;
