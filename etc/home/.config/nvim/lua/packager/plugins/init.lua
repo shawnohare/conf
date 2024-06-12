@@ -28,7 +28,6 @@ return {
         -- install jsregexp (optional!).
         -- build = "make install_jsregexp"
     },
-    { "numToStr/Comment.nvim", opts = {} },
     {
         "nvim-neorg/neorg",
         build = ":Neorg sync-parsers",

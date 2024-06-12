@@ -17,6 +17,9 @@ if (vim.g.vscode ~= nil) then
     do return end
 end
 
+-- ---------------------------------------------------------------------------
+-- package manager setup
+-- ---------------------------------------------------------------------------
 require("packager").setup()
 
 
@@ -28,7 +31,7 @@ vim.cmd([[
 try
     colorscheme hadalized
 catch /^Vim\%((\a\+)\)\=:E185/
-    colorscheme desert
+    colorscheme default
 endtry
 ]])
 

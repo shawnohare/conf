@@ -44,7 +44,7 @@ return {
                 "ruff_lsp",
                 "marksman",
                 "prosemd_lsp",
-                -- "nil_ls",       -- nix, TODO: cannot compile in some cases?
+                -- "nil_ls",    -- nix, TODO: cannot compile in some cases?
                 -- "teal_ls",   -- TODO: luarocks issue
                 "taplo",        -- toml
                 "terraformls",
@@ -78,6 +78,4 @@ return {
 
         end
     },
-
-
 }
