@@ -97,6 +97,7 @@
 
     # Extras to add to .zshenv
     envExtra = ''
+      source "~/.zshenv.local" 2&> /dev/null
     '';
 
     # Extras to add to .zshrc
