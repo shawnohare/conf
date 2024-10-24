@@ -7,8 +7,8 @@
 }: {
   programs.git = {
     enable = true;
-    userName = "Shawn O'Hare";
-    userEmail = "shawn@shawnohare.com";
+    # userName = "Shawn O'Hare";
+    # userEmail = "shawn@shawnohare.com";
     lfs.enable = true;
 
     aliases = {
