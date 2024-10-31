@@ -4,6 +4,7 @@
   inputs,
   darwin,
   home-manager,
+  determinate,
   target,
   ...
 }:
@@ -18,10 +19,9 @@ darwin.lib.darwinSystem rec {
     # to go through and apply our system type. We do this first so
     # the overlays are available globally.
     # { nixpkgs.overlays = overlays; }
-
     # ../hardware/${name}.nix
-    #
     ../host/${target.host.config}
+    # WARNING: Do not use home-manager switch if including as a nix-darwin module.
     home-manager.darwinModules.home-manager
     {
       home-manager = {
@@ -30,9 +30,10 @@ darwin.lib.darwinSystem rec {
         extraSpecialArgs = {
           inherit target;
         };
-        # Do not use home-manager switch if including as a nix-darwin module.
         users."${target.user.name}" = import ../home/${target.home.config};
       };
     }
+    # TODO: See if determine is useful for non-enterprise use?
+    # determinate.darwinModules.default
   ];
 }

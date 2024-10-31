@@ -3,43 +3,54 @@
 ## Introduction
 
 This repo primarily consists as an exercise in using a nix flake to manage
-our system / user configurations via nixpkgs, home-manager, devbox and standard
-symlink farming.
+our system / user configurations via nixpkgs, home-manager, standard
+symlink farming and potentially devbox.
 
 We hope it serves as a personal motivation to investigate NixOS more generally.
 For this reason we purposefully avoid some of the more layered frameworks (and
 their utility libraries) mentioned in the [References](#References) below, but
 try to take some structural cues.
 
+The best way
+
 
 ## Setup
+
+### Clone the Repo
+
+```bash
+git clone --recurse-submodules https://github.com/shawnohare/conf
+cd ~/conf
+```
+
 
 ###  Install nix
 
 Except on NixOS, we must install nix (the package manager) itself to build the flake.
-
-#### DeterminateSystems installer (preferred)
+Consider also [determinate][ds-intro].
 
 Note that this installer will not result in an identical setup as the official
 installer. In particular, some default channels are not necessarily set. This
 can make uninstalling nix-darwin a pain.
-Confer https://github.com/DeterminateSystems/nix-installer for nuances.
+[Confere the nix-installer repo][ds-nix-installer-repo] for nuances.
 
-```bash
-if [ "$(uname -s)" = "Darwin" ]; then
-    xcode-select --install
-fi
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-```
 
-#### Official installer
 
-```bash
-if [ "$(uname -s)" = "Darwin" ]; then
-    xcode-select --install
-fi
-sh <(curl -L https://nixos.org/nix/install) --daemon
-```
+1. [the Determinate Systems graphical installer][ds-graphical-installer].
+2. The Determinate Systems cli installer
+    ```bash
+    if [ "$(uname -s)" = "Darwin" ]; then
+        xcode-select --install
+    fi
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+    ```
+3. The official installer
+    ```bash
+    if [ "$(uname -s)" = "Darwin" ]; then
+        xcode-select --install
+    fi
+    sh <(curl -L https://nixos.org/nix/install) --daemon
+    ```
 
 ### macOS
 
@@ -51,6 +62,7 @@ basic options are
    option is preferred, but we have run into some stability issues
 1. Build a stand-alone home-manager.
 
+Confer [Nix Academy's nix on macOS](https://nixcademy.com/posts/nix-on-macos/).
 #### Install nix-darwin
 
 We install nix-darwin by building this flake for a specific host (e.g., "work")
@@ -60,7 +72,7 @@ corresponds to one the `darwinConfigurations` attributes in
 Clone and build the flake for a specified target, e.g.,
 
 ```bash
-git clone https://github.com/shawnohare/conf
+git clone --recurse-submodules https://github.com/shawnohare/conf
 cd conf
 host=work # defaults to $(hostname -s) if omitted
 ./switch "${host}"
@@ -218,6 +230,10 @@ by this repo are
 - [flake-utils-plus][flake-utils-plus]
 
 
-[matthias_nixos_config]: <https://github.com/MatthiasBenaets/nixos-config>
-[mitchellh_nixos_config]: <https://github.com/mitchellh/nixos-config>
-[flake-utils-plus]: <https://github.com/gytis-ivaskevicius/flake-utils-plus>
+[ds-intro]: https://docs.determinate.systems/getting-started/
+[ds-nix-installer-repo]: https://github.com/DeterminateSystems/nix-installer
+[ds-graphical-installer]: https://determinate.systems/posts/graphical-nix-installer/
+[matthias_nixos_config]: https://github.com/MatthiasBenaets/nixos-config
+[mitchellh_nixos_config]: https://github.com/mitchellh/nixos-config
+[flake-utils-plus]: https://github.com/gytis-ivaskevicius/flake-utils-plus
+[na-nix-on-macos]: https://nixcademy.com/posts/nix-on-macos/

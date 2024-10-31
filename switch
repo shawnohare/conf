@@ -11,11 +11,13 @@ _STASH="${DIR}/lib/stash/bin/stash"
 
 # Check if we are on macos.
 if [ "$(uname -s)" = "Darwin" ]; then
+    IS_MACOS=true
     REBUILD_CMD="darwin-rebuild"
     # APP_CONFIG="${HOME}/Library/Application Support"
     FIREFOX_PROFILES_DIR="${HOME}/Library/Application Support/Firefox/Profiles"
     LIBREWOLF_PROFILES_DIR="${HOME}/Library/Application Support/librewolf/Profiles"
 else
+    IS_MACOS=false
     REBUILD_CMD="nixos-rebuild"
     FIREFOX_PROFILES_DIR="${HOME}/.mozilla/firefox"
     LIBREWOLF_PROFILES_DIR="${HOME}/.librewolf"
@@ -130,7 +132,7 @@ _build_nix_darwin() {
     echo "switch: Did not detect darwin-rebuild command."
     _nix_darwin_backup
     _nix_build "darwinConfigurations.$1.system"
-    retrun 0
+    return 0
 }
 
 _build_home_manager() {
@@ -162,7 +164,8 @@ _switch() {
     "$1" --show-trace --verbose switch --flake "${attr}"
 }
 
-switch_ln() {
+
+main_ln() {
     # Define which files get linked here.
     "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
     # Link custom firefox CSS files. The profile name is dynamic.
@@ -175,7 +178,7 @@ switch_ln() {
 }
 
 
-switch_system() {
+main_system() {
     # rebuild the system configuration.
     # target defaults to compute name
     target="${1:-$(hostname -s)}"
@@ -191,7 +194,7 @@ switch_system() {
 }
 
 
-switch_home() {
+main_home() {
     # rebuild the (standalone) home-manager configuration
     target="${1:-$(whoami)}"
     if ! command -v "home-manager" 1> /dev/null; then
@@ -205,16 +208,22 @@ switch_home() {
     return 0
 }
 
-switch_update() {
+main_update() {
     # Update nixpkgs and the input package
     nix flake lock --update-input nixpkgs --update-input "$1"
 }
 
 
+main_init() {
+    if [ "$(uname -s)" = "Darwin" ]; then
+        xcode-select --install
+    fi
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+}
 
 # Parse subcommands.
 case "$1" in
-    system|home|ln|update)
+    system|home|ln|update|init)
         cmd="$1"
         shift
         ;;
@@ -237,7 +246,7 @@ case "$1" in
         "usage_${cmd}"
         ;;
     *)
-        "switch_${cmd}" "$@"
+        "main_${cmd}" "$@"
         exit
         ;;
 esac

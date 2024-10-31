@@ -16,12 +16,16 @@
     # darwin-specific overlays and packages which could otherwise cause build
     # failures on Linux systems.
 
+    # determinate systems
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
+
     # stable nixpkgs
     nixpkgs-stable.url = "github:nixos/nixpkgs/release-23.11";
     nixpkgs-stable-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
     # unstable nixpkgs (can be used to get more frequent updates)
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
 
     home-manager = {
       # stable must be linked to the corresponding nixpkgs stable
@@ -70,6 +74,7 @@
     home-manager,
     darwin,
     nur,
+    determinate,
     # alejandra,
     # , nixgl
     # , hyprland
@@ -139,6 +144,7 @@
         host = macos.arm.host;
         home = macos.arm.home;
         overlays = 0;
+        homebrew.enable = false;
       };
     };
   in {
@@ -153,17 +159,19 @@
     # );
 
     # Build system configurations.
-    # NOTE: Currently these also include home-manager modules but we are
-    # transitioning to a stand-alone home-manager set up so that
-    # home configurations can work in general Linux environments.
     darwinConfigurations = {
       mbp2016 = mkDarwin {
-        inherit darwin home-manager inputs;
+        inherit darwin home-manager inputs determinate;
         target = targets.mbp2016;
       };
 
+      air = mkDarwin {
+        inherit darwin home-manager inputs determinate;
+        target = targets.mba2022;
+      };
+
       work = mkDarwin {
-        inherit darwin home-manager inputs;
+        inherit darwin home-manager inputs determinate;
         target = targets.work;
       };
     };

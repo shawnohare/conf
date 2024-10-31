@@ -5,7 +5,7 @@
   inputs,
   pkgs,
   home-manager,
-  user,
+  target,
   ...
 }: {
   # Import cross-platform system configuration.
@@ -21,7 +21,7 @@
   };
 
   homebrew = {
-    enable = true;
+    enable = target.homebrew.enable or true;
     # onActivation.autoUpdate = False;
     # onActivation.cleanup = "zap";
     # onActivation.upgrade = False;
