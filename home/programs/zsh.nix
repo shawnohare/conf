@@ -8,7 +8,7 @@
     enable = true;
 
     autocd = true;
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     # builtin plugins.
     enableAutosuggestions = true;
     enableCompletion = true;
@@ -97,7 +97,7 @@
 
     # Extras to add to .zshenv
     envExtra = ''
-      source "~/.zshenv.local" 2&> /dev/null
+      source "${config.xdg.configHome}/zsh/.zshenv.local" 2&> /dev/null
     '';
 
     # Extras to add to .zshrc

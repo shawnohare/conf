@@ -11,13 +11,13 @@ _STASH="${DIR}/lib/stash/bin/stash"
 
 # Check if we are on macos.
 if [ "$(uname -s)" = "Darwin" ]; then
-    IS_MACOS=true
+    # IS_MACOS=true
     REBUILD_CMD="darwin-rebuild"
     # APP_CONFIG="${HOME}/Library/Application Support"
     FIREFOX_PROFILES_DIR="${HOME}/Library/Application Support/Firefox/Profiles"
     LIBREWOLF_PROFILES_DIR="${HOME}/Library/Application Support/librewolf/Profiles"
 else
-    IS_MACOS=false
+    # IS_MACOS=false
     REBUILD_CMD="nixos-rebuild"
     FIREFOX_PROFILES_DIR="${HOME}/.mozilla/firefox"
     LIBREWOLF_PROFILES_DIR="${HOME}/.librewolf"
@@ -26,15 +26,14 @@ fi
 usage() {
     cat <<EOF
 Usage:
-    switch home [attribute]
-    switch system [attribute]
-    switch ln [options]
-    switch update <package>
+    switch <command> [options]
 
 Commands:
+    backup - Backup some system files that often cause problems.
     home   - Use (standalone) home-manager and stash to update user configuration.
-    system - Update system settings in nixos or nix-darwin.
+    init   - Installs nix via Determinate Systems.
     ln     - Link configuration files not handled by home-manager.
+    system - Update system settings in nixos or nix-darwin.
     update - Update the flake lockfile's entry for the input package.
 
 Options:
@@ -66,8 +65,12 @@ usage_system() {
 Usage:
     switch system [attribute]
 
+Examples:
+    switch system work
+
 Args:
-    attribute: An attribute in the ${DIR}/flake.nix nixosConfigurations or darwinConfigurations output.
+    attribute: An attribute in the ${DIR}/flake.nix nixosConfigurations or
+        darwinConfigurations output.
 
 Options:
     -h|--help          Display this this usage message.
@@ -81,13 +84,14 @@ Usage:
 
 Description:
     Link configuration files not handled by home-manager. This is a thin
-    wrapper around the stash symlink manager. All files to be linked should
-    live in ${DIR}/etc.
+    wrapper around the stash symlink manager.
+
+Stash usage:
+${_STASH}
 
 Options:
     -h|--help          Display this this usage message.
 
-Displaying help for ${_STASH}:
 
 EOF
     "${_STASH}" --help
@@ -189,7 +193,7 @@ main_system() {
         cmd="${DIR}/result/sw/bin/darwin-rebuild"
     fi
     _switch "${cmd}" "${target}"
-    switch_ln --force
+    main_ln --force
     return 0
 }
 
@@ -203,7 +207,7 @@ main_home() {
         _switch "home-manager" "${target}"
     fi
     
-    switch_ln --force
+    main_ln --force
 
     return 0
 }
