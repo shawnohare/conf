@@ -15,14 +15,36 @@ For this reason we purposefully avoid some of the more layered frameworks (and
 their utility libraries) mentioned in the [References](#References) below, but
 try to take some structural cues.
 
+### Repo Structure
+
+- [host](./host): Contains system specific configurations.
+   In theory these configurations are at the highest level,
+   but we suspect that architecture-specific configurations leak into lower
+   levels, e.g., with new Apple Silicon based macs.
+   Cf. [Mitchell Hashimoto's nixos setup][mitchellh_nixos_config] to see how
+   vms are used to abstract some of these nuances away. We may settle upon
+   a pattern where some hosts are abstract, to have common files to apply to
+   a company mandated MacBook vs a personal one.
+- [home (home-manager)](./home): App configurations managed by home manager.
+- [./home/etc](./home/etc): Configurations not managed directly by home-manager
+  but symlinked via its `file` mechanism. Produces links to read-only files
+  so not ammenable to rapid iteration.
+- [lib](./lib/): Common boilerplate library functions used in this
+  flake, e.g., for building nix-darwin and standalone home-manager configurations.
+- [overlays](./overlays) containing package overrides, e.g., to use a
+   different channel. Not used much if at all at the moment.
+- [etc](./etc): Configurations not managed by home-manager, but
+  via a symlink farm manager.
+
+
+## Setup
 
 ### Clone the Repo
 
 ```bash
-git clone --recurse-submodules https://github.com/shawnohare/conf
-cd ~/conf
+git clone --recurse-submodules https://github.com/shawnohare/nixos-config
+cd ~/nixos-config
 ```
-
 
 ###  Install nix
 
@@ -75,8 +97,7 @@ corresponds to one the `darwinConfigurations` attributes in
 Clone and build the flake for a specified target, e.g.,
 
 ```bash
-git clone --recurse-submodules https://github.com/shawnohare/conf
-cd conf
+cd nixos-config
 host=work # defaults to $(hostname -s) if omitted
 ./switch "${host}"
 # or
@@ -131,26 +152,6 @@ nix build --extra-experimental-features "nix-command flakes" ".#homeConfiguratio
 # or
 ./switch home ${host}
 ```
-
-## Repo Structure
-
-- [host](./host): Contains system specific configurations.
-   In theory these configurations are at the highest level,
-   but we suspect that architecture-specific configurations leak into lower
-   levels, e.g., with new Apple Silicon based macs.
-   Cf. [Mitchell Hashimoto's nixos setup][mitchellh_nixos_config] to see how
-   vms are used to abstract some of these nuances away. We may settle upon
-   a pattern where some hosts are abstract, to have common files to apply to
-   a company mandated MacBook vs a personal one.
-- [home (home-manager)](./home): The user-specific program configurations
-   that will be managed by home-manager. Typicaly these profiles are host
-   agnostic to the extent possible.
-- [lib](./lib/): Common boilerplate library functions used in this
-  flake, e.g., for building nix-darwin and standalone home-manager configurations.
-- [overlays](./overlays) containing package overrides, e.g., to use a
-   different channel. Not used much if at all at the moment.
-- [etc](./etc): Configurations not managed by home-manager, but
-  via a symlink farm manager.
 
 
 ## Package management

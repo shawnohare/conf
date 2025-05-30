@@ -6,7 +6,7 @@
 # ----------------------------------------------------------------------------
 
 # Set global vars used in this script.
-DIR="${HOME}/conf"
+DIR=$(cd -- "$(dirname -- "$0")" 2> /dev/null && pwd -P)
 _STASH="${DIR}/lib/stash/bin/stash"
 
 # Check if we are on macos.
@@ -178,6 +178,7 @@ _switch() {
 cmd_ln() {
     # Define which files get linked here.
     "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
+    "${_STASH}" "$@" "${DIR}/etc/config" "${HOME}/.config"
     # Link custom firefox CSS files. The profile name is dynamic.
     if [ -d "${FIREFOX_PROFILES_DIR}" ]; then
         "${_STASH}" "$@" "${DIR}/etc/home/.config/firefox/chrome" "$(find "${FIREFOX_PROFILES_DIR}"/*default* -maxdepth 0 -type d)/chrome"

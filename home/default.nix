@@ -8,15 +8,14 @@
   homebrew_prefix = "/opt/homebrew";
   local_bin = "$HOME/.local/bin";
 in {
-  # Let home-manager manage itself.
   imports = [
-    ../programs/readline.nix
-    ../programs/git.nix
-    ../programs/starship.nix
-    ../programs/eza.nix
-    ../programs/zsh.nix
-    ../programs/bash.nix
-    ../programs/tmux.nix
+    ./readline.nix
+    ./git.nix
+    ./starship.nix
+    ./eza.nix
+    ./zsh.nix
+    ./bash.nix
+    ./tmux.nix
   ];
 
   home = {
@@ -63,8 +62,9 @@ in {
         du-dust # du + rust = dust
         # entr
         eza # maintained version of exa.
-        fd
         fastmod
+        fd
+        fish
         # gcc
         gh # github cli client
         git
@@ -123,11 +123,8 @@ in {
       # )
       ;
 
-    # Home Manager can symlink config files. The primary way to manage
-    # plain files is through 'home.file'.
-    # The actual symlinks point to read-only files,
-    # TODO: This makes tinkering a bit of a pain. Consider
-    # managing non-hm configurations manually.
+    # Home Manager can symlink user config files. The primary way to manage
+    # plain files is through 'home.file',
     file = {
       # ".config/" = {
       #   recursive = true;
@@ -178,6 +175,7 @@ in {
       POETRY_VIRTUALENVS_PATH = "${config.xdg.stateHome}/pypoetry/envs";
       PYENV = "${config.xdg.stateHome}/pyenv/bin/pyenv";
       PYENV_ROOT = "${config.xdg.stateHome}/pyenv";
+      PYTHONPYCACHEPREFIX = "${config.xdg.cacheHome}/pycache";
       PYENV_VIRTUALENV_DISABLE_PROMPT = 1;
       PYSPARK_DRIVER_PYTHON = "ipython";
       RUSTUP_HOME = "${config.xdg.stateHome}/rustup";
@@ -206,12 +204,13 @@ in {
   };
 
   # Defaults to simply enable without much configuration.
-  # More detailed configurations live in ./programs
+  # More detailed configurations live in ../programs
   programs = {
     awscli.enable = true;
     bottom.enable = true;
     carapace.enable = true;
     dircolors.enable = true;
+    fish.enable = true;
     home-manager.enable = true;
     htop.enable = true;
     zoxide.enable = true;
