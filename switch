@@ -126,6 +126,8 @@ _nix_darwin_backup() {
     sudo mv -v /etc/zshrc /etc/zshrc.before-nix-darwin
     sudo mv -v /etc/zprofile /etc/zprofile.before-nix-darwin
     sudo mv -v /etc/zshenv /etc/zshenv.before-nix-darwin
+    # might need to mv cert files on work machines
+    # sudo mv -v /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt.before-nix-darwin
 }
 
 _build_nix_darwin() {
@@ -134,7 +136,7 @@ _build_nix_darwin() {
         echo "switch: No host specified to initialize nix-darwin."
     fi
     echo "switch: Did not detect darwin-rebuild command."
-    _nix_darwin_backup
+    # _nix_darwin_backup
     _nix_build "darwinConfigurations.$1.system"
     return 0
 }
@@ -165,11 +167,15 @@ _switch() {
         attr="$DIR/#$2"
     fi
     echo "switch: Switching configuration using $1 switch --flake ${attr}"
-    "$1" --show-trace --verbose switch --flake "${attr}"
+    if [ "${REBUILD_CMD}" = "darwin-rebuild" ]; then
+        sudo "$1" --show-trace --verbose switch --flake "${attr}"
+    else
+        "$1" --show-trace --verbose switch --flake "${attr}"
+    fi
 }
 
 
-main_ln() {
+cmd_ln() {
     # Define which files get linked here.
     "${_STASH}" "$@" "${DIR}/etc/home" "${HOME}"
     # Link custom firefox CSS files. The profile name is dynamic.
@@ -182,7 +188,7 @@ main_ln() {
 }
 
 
-main_system() {
+cmd_system() {
     # rebuild the system configuration.
     # target defaults to compute name
     target="${1:-$(hostname -s)}"
@@ -191,14 +197,18 @@ main_system() {
     if ! command -v "${REBUILD_CMD}" 1> /dev/null; then
         _build_nix_darwin "${target}"
         cmd="${DIR}/result/sw/bin/darwin-rebuild"
+        # sudo "${cmd}" --flake "${DIR}/#${target}" switch
+    else
+        echo "Found ${REBUILD_CMD}"
+        # _switch "${cmd}" "${target}"
     fi
     _switch "${cmd}" "${target}"
-    main_ln --force
+    cmd_ln --force
     return 0
 }
 
 
-main_home() {
+cmd_home() {
     # rebuild the (standalone) home-manager configuration
     target="${1:-$(whoami)}"
     if ! command -v "home-manager" 1> /dev/null; then
@@ -207,21 +217,22 @@ main_home() {
         _switch "home-manager" "${target}"
     fi
     
-    main_ln --force
+    cmd_ln --force
 
     return 0
 }
 
-main_update() {
+cmd_update() {
     # Update nixpkgs and the input package
     nix flake lock --update-input nixpkgs --update-input "$1"
 }
 
 
-main_init() {
+cmd_init() {
     if [ "$(uname -s)" = "Darwin" ]; then
         xcode-select --install
     fi
+    echo "Using Determinate Systems nix installer. Select no install vanilla nix."
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 }
 
@@ -250,7 +261,7 @@ case "$1" in
         "usage_${cmd}"
         ;;
     *)
-        "main_${cmd}" "$@"
+        "cmd_${cmd}" "$@"
         exit
         ;;
 esac

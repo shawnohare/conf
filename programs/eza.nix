@@ -8,7 +8,6 @@
   # Sets an alias eza -> eza (extra Options) and ls - (eza)
   programs.eza = {
     enable = true;
-    enableAliases = true;
     extraOptions = [
       "--all"
       "--header"
@@ -18,7 +17,7 @@
       "--classify"
       # "--extended"
     ];
-    icons = true;
+    icons = "auto";
     git = false;
   };
 }

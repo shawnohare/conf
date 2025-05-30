@@ -3,18 +3,18 @@
 ## Introduction
 
 This repo primarily consists as an exercise in using a nix flake to manage
-our system / user configurations via nixpkgs, home-manager, standard
-symlink farming and potentially devbox.
+our system and user configurations via
+
+- nixpkgs
+- home-manager
+- standard symlink farming
+- (optionally) devbox.
 
 We hope it serves as a personal motivation to investigate NixOS more generally.
 For this reason we purposefully avoid some of the more layered frameworks (and
 their utility libraries) mentioned in the [References](#References) below, but
 try to take some structural cues.
 
-The best way
-
-
-## Setup
 
 ### Clone the Repo
 
@@ -26,25 +26,27 @@ cd ~/conf
 
 ###  Install nix
 
-Except on NixOS, we must install nix (the package manager) itself to build the flake.
-Consider also [determinate][ds-intro].
+Except on NixOS, we must install nix (the package manager) itself to build the
+flake. Consider also [determinate][ds-intro].
 
-Note that this installer will not result in an identical setup as the official
-installer. In particular, some default channels are not necessarily set. This
-can make uninstalling nix-darwin a pain.
-[Confere the nix-installer repo][ds-nix-installer-repo] for nuances.
+Note that the Determinate Systems installer will not necessarily result in an
+identical setup as the official installer. In particular, some default channels
+are not necessarily set. This can make uninstalling nix-darwin a pain. Confer
+the [nix-installer repo][ds-nix-installer-repo] for nuances.
 
+Determinate systems nix is now [directly compatible][ds-nix-darwin-compat]
+with nix-darwin 24.11. Both detsys nix and nix-darwin want to manage nix
+directly.
 
-
-1. [the Determinate Systems graphical installer][ds-graphical-installer].
-2. The Determinate Systems cli installer
+1. The [Determinate Systems graphical installer][ds-graphical-installer].
+1. The Determinate Systems cli installer
     ```bash
     if [ "$(uname -s)" = "Darwin" ]; then
         xcode-select --install
     fi
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
     ```
-3. The official installer
+1. The official installer
     ```bash
     if [ "$(uname -s)" = "Darwin" ]; then
         xcode-select --install
@@ -59,10 +61,11 @@ nix-darwin surfaces a NixOS like system configuration at the system level. The
 basic options are
 
 1. Build nix-darwin and include home-manager as a nix-darwin module. In theory this
-   option is preferred, but we have run into some stability issues
+   option is preferred, but we have run into some stability issues.
 1. Build a stand-alone home-manager.
 
 Confer [Nix Academy's nix on macOS](https://nixcademy.com/posts/nix-on-macos/).
+
 #### Install nix-darwin
 
 We install nix-darwin by building this flake for a specific host (e.g., "work")
@@ -78,7 +81,7 @@ host=work # defaults to $(hostname -s) if omitted
 ./switch "${host}"
 # or
 nix --extra-experimental-features "nix-command flakes" build ".#darwinConfigurations.${host}.system"
-result/sw/bin/darwin-rebuild switch --flake ".#${host}"
+sudo result/sw/bin/darwin-rebuild switch --flake ".#${host}"
 ```
 
 #### nix-darwin rebuilding
@@ -89,14 +92,13 @@ and user configuration via
 ```bash
 ./switch "${host}"
 # or
-darwin-rebuild switch --flake "#${host}"
+sudo darwin-rebuild switch --flake "#${host}"
 ```
 
 #### Troubleshooting nix-darwin
 
 After initially installing nix or macOS updates `nix-darwin switch` can fail
 for a variety of reasons.
-
 
 nix-darwin might fail if it cannot find `/run`. Try
 
@@ -115,7 +117,7 @@ sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/zshenv /etc/zshenv.before-nix-darwin
 ```
-
+For cert issues cf <https://discourse.nixos.org/t/ssl-ca-cert-error-on-macos/31171/6>
 
 ## home-manager
 
@@ -224,15 +226,22 @@ by this repo are
 
 ## References
 
+Some example nixos-config config repositories we take inspiration from.
+
 - This flake was initially a near clone of
   [Matthias' NixOS & macOS configuration flake][matthias_nixos_config]
 - [Mitchell Hashimoto's nixos config][mitchellh_nixos_config]
+- [Dustin Lyon's nixos-config][dustinlyons-nixos-config]
+
+Other resources
 - [flake-utils-plus][flake-utils-plus]
 
 
+[dustinlyons-nixos-config]: https://github.com/dustinlyons/nixos-config>
 [ds-intro]: https://docs.determinate.systems/getting-started/
 [ds-nix-installer-repo]: https://github.com/DeterminateSystems/nix-installer
 [ds-graphical-installer]: https://determinate.systems/posts/graphical-nix-installer/
+[ds-nix-darwin-compat]: https://determinate.systems/posts/nix-darwin-updates/
 [matthias_nixos_config]: https://github.com/MatthiasBenaets/nixos-config
 [mitchellh_nixos_config]: https://github.com/mitchellh/nixos-config
 [flake-utils-plus]: https://github.com/gytis-ivaskevicius/flake-utils-plus
