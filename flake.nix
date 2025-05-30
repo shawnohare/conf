@@ -8,24 +8,22 @@
   };
 
   inputs = {
-    # Track channels with commits tested and built by hydra
-    # For darwin hosts: it can be helpful to track this darwin-specific stable
-    # channel equivalent to the `nixos-*` channels for NixOS. For one, these
-    # channels are more likely to provide cached binaries for darwin systems.
-    # But, perhaps even more usefully, it provides a place for adding
-    # darwin-specific overlays and packages which could otherwise cause build
-    # failures on Linux systems.
-
-    # determinate systems
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
-
     # stable nixpkgs
-    nixpkgs-stable.url = "github:nixos/nixpkgs/release-23.11";
-    nixpkgs-stable-darwin.url = "github:nixos/nixpkgs/nixpkgs-23.11-darwin";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/release-25.05";
+    nixpkgs-stable-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
     # unstable nixpkgs (can be used to get more frequent updates)
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
+    # nix-darwin provides a system configuration layer for macOS that's
+    # similar to what's provided in NixOS.
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # determinate systems. For use with nixOS
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
 
     home-manager = {
       # stable must be linked to the corresponding nixpkgs stable
@@ -34,13 +32,6 @@
       # unstable
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # nix-darwin provides a system configuration layer for macOS that's
-    # similar to what's provided in NixOS.
-    darwin = {
-      url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -72,7 +63,7 @@
     self,
     nixpkgs,
     home-manager,
-    darwin,
+    nix-darwin,
     nur,
     determinate,
     # alejandra,
@@ -97,7 +88,7 @@
     targets = rec {
       # Default settings for hosts / machines.
       default = {
-        home.stateVersion = "23.11";
+        home.stateVersion = "25.05";
         home.config = "default.nix";
       };
 
@@ -161,23 +152,23 @@
     # Build system configurations.
     darwinConfigurations = {
       mbp2016 = mkDarwin {
-        inherit darwin home-manager inputs determinate;
+        inherit nix-darwin home-manager inputs determinate;
         target = targets.mbp2016;
       };
 
       air = mkDarwin {
-        inherit darwin home-manager inputs determinate;
+        inherit nix-darwin home-manager inputs determinate;
         target = targets.mba2022;
       };
 
       work = mkDarwin {
-        inherit darwin home-manager inputs determinate;
+        inherit nix-darwin home-manager inputs determinate;
         target = targets.work;
       };
     };
 
-    # Stand-alone home-manager configurations so that user configs
-    # can be rebuilt independently of the system itself.
+    # Stand-alone home-manager configurations. Cannot be used in conjunction
+    # with nix-darwin.
     # cf. https://github.com/MatthiasBenaets/nixos-config/blob/master/nix.org
     # TODO: We should be able to use "forEachSystem" here to generate
     # configs for each system that use the appropriate pkgs.

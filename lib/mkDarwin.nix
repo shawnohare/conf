@@ -2,13 +2,13 @@
 # particular architecture and user.
 {
   inputs,
-  darwin,
+  nix-darwin,
   home-manager,
   determinate,
   target,
   ...
 }:
-darwin.lib.darwinSystem rec {
+nix-darwin.lib.darwinSystem rec {
   system = target.host.system;
   specialArgs = {
     inherit inputs system target;

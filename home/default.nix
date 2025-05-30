@@ -10,14 +10,13 @@
 in {
   # Let home-manager manage itself.
   imports = [
-    programs/readline.nix
-    programs/git.nix
-    programs/starship.nix
-    # programs/exa.nix  # TODO: not maintained, remove when ready.
-    programs/eza.nix # TODO: Might need newer hm version. eza not found.
-    programs/zsh.nix
-    programs/bash.nix
-    programs/tmux.nix
+    ../programs/readline.nix
+    ../programs/git.nix
+    ../programs/starship.nix
+    ../programs/eza.nix
+    ../programs/zsh.nix
+    ../programs/bash.nix
+    ../programs/tmux.nix
   ];
 
   home = {
@@ -40,11 +39,11 @@ in {
     # NOTE: devbox can alternatively be used as a global / main package manager
     # and comes with its own lockfile. Installing devbox also will install nix
     # on macOS and non-NixOS systems.
-    packages = with pkgs;
-      [
+    packages =
+      with pkgs; [
         # # Adds the 'hello' command to your environment. It prints a friendly
         # # "Hello, world!" when run.
-        _1password
+        _1password-cli
         hello
 
         alejandra
@@ -100,15 +99,8 @@ in {
         zellij # terminal multiplexer
         zsh
 
-        # # It is sometimes useful to fine-tune packages, for example, by applying
-        # # overrides. You can do that directly here, just don't forget the
-        # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-        # # fonts?
-        (nerdfonts.override {
-          fonts = [
-            "JetBrainsMono"
-          ];
-        })
+        # fonts
+        nerd-fonts.jetbrains-mono
 
         # # You can also create simple shell scripts directly inside your
         # # configuration. For example, this adds a command 'my-hello' to your
@@ -120,14 +112,16 @@ in {
       # On macOS, a nix provided clang will fail to link many Apple SDK
       # components. This can cause build issues, e.g., when using cargo.
       # One approach is to export PATH=/usr/bin:$PATH when building when cargo
-      ++ (
-        if pkgs.stdenv.isDarwin
-        # NOTE: We did encounter an issue with the QuickTime framework being
-        # unavailable.
-        # then (builtins.attrValues darwin.apple_sdk.frameworks)
-        then with darwin.apple_sdk.frameworks; [IOKit]
-        else []
-      );
+      # NOTE: These sdk frameworks are stubs in 25.05?
+      # ++ (
+      #   if pkgs.stdenv.isDarwin
+      #   # NOTE: We did encounter an issue with the QuickTime framework being
+      #   # unavailable.
+      #   # then (builtins.attrValues darwin.apple_sdk.frameworks)
+      #   then with darwin.apple_sdk.frameworks; [IOKit]
+      #   else []
+      # )
+      ;
 
     # Home Manager can symlink config files. The primary way to manage
     # plain files is through 'home.file'.

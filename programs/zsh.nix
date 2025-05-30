@@ -8,9 +8,11 @@
     enable = true;
 
     autocd = true;
-    dotDir = "${config.xdg.configHome}/zsh";
-    # builtin plugins.
-    enableAutosuggestions = true;
+    # Used to be able to set xdg for dotDir now it prepends HOME
+    # https://github.com/nix-community/home-manager/issues/5100
+    # dotDir = "${config.xdg.configHome}/zsh";
+    dotDir = ".config/zsh";
+    autosuggestion.enable = true;
     enableCompletion = true;
     syntaxHighlighting = {
       enable = true;
@@ -101,13 +103,12 @@
     '';
 
     # Extras to add to .zshrc
-    initExtra = ''
+    initContent = ''
       bindkey -v
       autoload -U chpwd_recent_dirs cdr add-zsh-hook
       add-zsh-hook chpwd chpwd_recent_dirs
       autoload -U zmv
       autopair-init
-
 
       # Align with warp.
       bindkey "^F" autosuggest-accept

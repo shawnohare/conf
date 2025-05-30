@@ -40,10 +40,12 @@
   };
 
   # macOS system defaults configuration that normally occurr through UI.
-  security = {
-    pam.enableSudoTouchIdAuth = true;
-  };
+  security.pam.services.sudo_local.touchIdAuth = true;
+
   system = {
+    primaryUser = target.user.name;
+    stateVersion = 6;
+
     defaults = {
       NSGlobalDomain = {
         AppleKeyboardUIMode = 3;

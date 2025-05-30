@@ -33,27 +33,14 @@
     ];
   };
 
-  # Fonts can also be installed by home-manager.
-  # fonts = {
-  #   # Fonts
-  #   fontDir.enable = true;
-  #   fonts = [
-  #     (pkgs.nerdfonts.override {
-  #       fonts = [
-  #         "JetBrainsMono"
-  #       ];
-  #     })
-  #   ];
-  # };
-
   # does not appear to be included in nix-darwin
   # i18n.defaultLocale = "en_US.UTF-8";
 
   # use unstable nix so we can access flakes
   nix = {
-    configureBuildUsers = true;
-    nrBuildUsers = 32;
-    package = pkgs.nixUnstable;
+    # configureBuildUsers = true;
+    # nrBuildUsers = 32;
+    package = pkgs.nixVersions.latest;
     gc = {
       automatic = true;
       interval.Day = 7; #Hours, minutes
@@ -72,23 +59,12 @@
     };
   };
 
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
 
-  programs = {
-    zsh = {
-      enable = true;
-    };
-  };
+  programs.zsh.enable = true;
 
-  services = {
-    nix-daemon = {
-      enable = true;
-    };
-  };
+  # nix-darwin manages nix-daemon when nix.enable is on
+  # services.nix-daemon.enable = true;
 
   users = {
     nix = {
